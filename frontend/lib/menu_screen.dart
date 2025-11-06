@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import 'cart_screen.dart';
+import 'colors.dart';
 import 'dish_card.dart';
 import 'model/dish.dart';
 
@@ -149,19 +149,9 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('Menu du Restaurant Le Gourmet'),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Menu du Restaurant Le Gourmet'),
         backgroundColor: CupertinoColors.systemBackground,
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.cart),
-          onPressed: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const CartScreen()),
-            );
-          },
-        ),
       ),
       child: SafeArea(
         child: Column(
@@ -200,7 +190,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? CupertinoColors.systemOrange
+                      ? Colors.primary
                       : CupertinoColors.systemGrey6,
                   borderRadius: BorderRadius.circular(20),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import 'colors.dart';
 import 'dish_detail_screen.dart';
 import 'model/dish.dart';
 
@@ -84,7 +85,7 @@ class DishCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: CupertinoColors.systemOrange,
+                          color: Colors.primary,
                         ),
                       ),
                     ],

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:restaurant_menu/service/cart_service.dart';
 
+import 'colors.dart';
 import 'model/dish.dart';
 
 class DishDetailScreen extends StatelessWidget {
@@ -44,7 +44,6 @@ class DishDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nom et prix
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +64,7 @@ class DishDetailScreen extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: CupertinoColors.systemOrange,
+                            color: Colors.primary,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -146,21 +145,35 @@ class DishDetailScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    SizedBox(
+                    Container(
                       width: double.infinity,
-                      child: CupertinoButton(
-                        color: CupertinoColors.systemOrange,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemGrey6,
                         borderRadius: BorderRadius.circular(12),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: const Text(
-                          'Ajouter à la commande',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: CupertinoColors.white,
-                          ),
+                        border: Border.all(
+                          color: Colors.primary,
+                          width: 1,
                         ),
-                        onPressed: () => _showQuantityPicker(context, dish)
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            CupertinoIcons.info,
+                            color: Colors.primary,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text(
+                              'Pour commander ce plat, veuillez contacter le restaurant directement.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: CupertinoColors.systemGrey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -179,7 +192,7 @@ class DishDetailScreen extends StatelessWidget {
         Icon(
           icon,
           size: 20,
-          color: CupertinoColors.systemOrange,
+          color: Colors.primary,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -202,67 +215,5 @@ class DishDetailScreen extends StatelessWidget {
       ],
     );
   }
-
-  void _showQuantityPicker(BuildContext context, Dish dish) {
-    int selectedQuantity = 1;
-
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Quantité'),
-        content: SizedBox(
-          height: 120,
-          child: CupertinoPicker(
-            itemExtent: 40,
-            onSelectedItemChanged: (index) {
-              selectedQuantity = index + 1;
-            },
-            children: List.generate(
-              10,
-                  (index) => Center(child: Text('${index + 1}')),
-            ),
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Annuler'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: const Text('Ajouter'),
-            onPressed: () async {
-              final cartService = CartService();
-              await cartService.loadCart();
-
-              for (int i = 0; i < selectedQuantity; i++) {
-                await cartService.addItem(dish);
-              }
-
-              if (context.mounted) {
-                Navigator.pop(context);
-                showCupertinoDialog(
-                  context: context,
-                  builder: (context) => CupertinoAlertDialog(
-                    title: const Text('Ajouté !'),
-                    content: Text(
-                      '$selectedQuantity x ${dish.name} ajouté(s) à votre commande.',
-                    ),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text('OK'),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
 
 }
