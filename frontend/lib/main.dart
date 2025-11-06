@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'main_tab_view.dart';
+import 'restaurant_presentation_screen.dart';
+import 'colors.dart' as app_colors;
 import 'auth/welcome_screen.dart';
 
 void main() {
@@ -12,9 +16,9 @@ class RestaurantMenuApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoApp(
-      title: 'Menu Restaurant',
+      title: 'Le Gourmet Restaurant',
       theme: CupertinoThemeData(
-        primaryColor: CupertinoColors.systemOrange,
+        primaryColor: app_colors.Colors.primary,
         brightness: Brightness.light,
       ),
       home: WelcomeScreen(),
