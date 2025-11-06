@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'dish_detail_screen.dart';
-import 'model/dish.dart';
+import 'models/dish.dart';
 
 class DishCard extends StatelessWidget {
   final Dish dish;

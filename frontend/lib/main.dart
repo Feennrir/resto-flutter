@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'menu_screen.dart';
+import 'auth/welcome_screen.dart';
 
 void main() {
   runApp(const RestaurantMenuApp());
@@ -18,7 +17,7 @@ class RestaurantMenuApp extends StatelessWidget {
         primaryColor: CupertinoColors.systemOrange,
         brightness: Brightness.light,
       ),
-      home: MenuScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

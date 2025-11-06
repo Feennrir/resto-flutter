@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'cart_screen.dart';
 import 'dish_card.dart';
-import 'model/dish.dart';
+import 'models/dish.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);

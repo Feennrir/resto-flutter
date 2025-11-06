@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/card_item.dart';
-import '../model/dish.dart';
+import '../models/card_item.dart';
+import '../models/dish.dart';
 
 class CartService {
   static const String _cartKey = 'cart_items';
