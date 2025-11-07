@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date DATE NOT NULL,
     reservation_time TIME NOT NULL,
     party_size INTEGER NOT NULL,
-    status VARCHAR(50) DEFAULT 'confirmed',
+    status VARCHAR(50) DEFAULT 'pending',
     special_requests TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
