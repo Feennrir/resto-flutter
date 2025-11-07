@@ -17,7 +17,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late ReservationScreenViewModel viewModel;
   late TextEditingController specialRequestsController;
   final String restaurantId = '1';
-  final String userId = '1';
 
   @override
   void initState() {
@@ -395,7 +394,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
   Future<void> _handleReservation() async {
     try {
       await viewModel.createReservation(
-        userId: userId,
         restaurantId: restaurantId,
       );
 

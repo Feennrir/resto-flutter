@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:restaurant_menu/presentation/main_tab_view.dart';
+import 'package:restaurant_menu/utils/colors.dart';
 import '../presentation/menu_screen.dart';
 import '../presentation/login_screen.dart';
 import '../viewmodels/auth_viewmodel.dart';
@@ -14,10 +14,6 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen>
     with SingleTickerProviderStateMixin {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _authViewModel = AuthViewModel();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -46,10 +42,6 @@ class _SignupScreenState extends State<SignupScreen>
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
     _animationController.dispose();
     _authViewModel.removeListener(_onAuthStateChanged);
     _authViewModel.dispose();
@@ -58,7 +50,7 @@ class _SignupScreenState extends State<SignupScreen>
 
   void _onAuthStateChanged() {
     if (_authViewModel.errorMessage != null) {
-      _showError(_authViewModel.errorMessage!);
+      _authViewModel.showError(context, _authViewModel.errorMessage!);
       _authViewModel.clearError();
     }
 
@@ -68,48 +60,6 @@ class _SignupScreenState extends State<SignupScreen>
         (route) => false,
       );
     }
-  }
-
-  Future<void> _handleSignup() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _confirmPasswordController.text.isEmpty) {
-      _showError('Veuillez remplir tous les champs');
-      return;
-    }
-
-    if (_passwordController.text != _confirmPasswordController.text) {
-      _showError('Les mots de passe ne correspondent pas');
-      return;
-    }
-
-    if (_passwordController.text.length < 6) {
-      _showError('Le mot de passe doit contenir au moins 6 caractères');
-      return;
-    }
-
-    await _authViewModel.signup(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
-  }
-
-  void _showError(String message) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Erreur'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('OK'),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -170,7 +120,7 @@ class _SignupScreenState extends State<SignupScreen>
               ),
               const SizedBox(height: 8),
               CupertinoTextField(
-                controller: _nameController,
+                controller: _authViewModel.nameController,
                 placeholder: 'Jean Dupont',
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -194,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen>
               ),
               const SizedBox(height: 8),
               CupertinoTextField(
-                controller: _emailController,
+                controller: _authViewModel.emailController,
                 placeholder: 'votre@email.com',
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
@@ -220,7 +170,7 @@ class _SignupScreenState extends State<SignupScreen>
               ),
               const SizedBox(height: 8),
               CupertinoTextField(
-                controller: _passwordController,
+                controller: _authViewModel.passwordController,
                 placeholder: 'Au moins 6 caractères',
                 obscureText: _obscurePassword,
                 padding: const EdgeInsets.all(16),
@@ -253,7 +203,7 @@ class _SignupScreenState extends State<SignupScreen>
               ),
               const SizedBox(height: 8),
               CupertinoTextField(
-                controller: _confirmPasswordController,
+                controller: _authViewModel.confirmPasswordController,
                 placeholder: 'Confirmez votre mot de passe',
                 obscureText: _obscureConfirmPassword,
                 padding: const EdgeInsets.all(16),
@@ -285,9 +235,9 @@ class _SignupScreenState extends State<SignupScreen>
                   return SizedBox(
                     height: 54,
                     child: CupertinoButton(
-                      color: CupertinoColors.systemOrange,
+                      color: Colors.primary,
                       borderRadius: BorderRadius.circular(16),
-                      onPressed: _authViewModel.isLoading ? null : _handleSignup,
+                      onPressed: _authViewModel.isLoading ? null : () => _authViewModel.handleSignup(context),
                       child: _authViewModel.isLoading
                           ? const CupertinoActivityIndicator(color: CupertinoColors.white)
                           : const Text(

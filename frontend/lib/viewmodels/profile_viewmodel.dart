@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:restaurant_menu/models/reservation.dart';
 import '../models/user.dart';
+import '../repositories/dto/reservation_profile_dto.dart';
 import '../repositories/user_repository.dart';
 
 class ProfileViewModel {
@@ -8,6 +10,8 @@ class ProfileViewModel {
   final ValueNotifier<User?> userNotifier = ValueNotifier<User?>(null);
   final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<String?> errorMessageNotifier = ValueNotifier<String?>(null);
+  final ValueNotifier<List<ReservationProfileDto>> reservations = ValueNotifier<List<ReservationProfileDto>>([]);
+
 
   User? get user => userNotifier.value;
   bool get isLoading => isLoadingNotifier.value;
@@ -22,7 +26,9 @@ class ProfileViewModel {
 
     try {
       final loadedUser = await _userRepository.getProfile();
+      final reservationList = await _userRepository.getUserReservations(userId : loadedUser!.id);
       userNotifier.value = loadedUser;
+      reservations.value = reservationList;
       isLoadingNotifier.value = false;
     } catch (e) {
       errorMessageNotifier.value = e.toString();

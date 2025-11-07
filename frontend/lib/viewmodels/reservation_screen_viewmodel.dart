@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_menu/models/reservation.dart';
+import 'package:restaurant_menu/repositories/auth_repository.dart';
 import 'package:restaurant_menu/repositories/reservation_repository.dart';
 
 class ReservationScreenViewModel {
   final ReservationRepository reservationRepository = ReservationRepository();
+  final AuthRepository authRepository = AuthRepository();
 
   ReservationScreenViewModel();
 
@@ -30,13 +32,13 @@ class ReservationScreenViewModel {
   }
 
   Future<void> createReservation({
-    required String userId,
     required String restaurantId,
   }) async {
     isLoading.value = true;
     try {
+      final user = await authRepository.getStoredUser();
       reservation = await reservationRepository.createReservation(
-        userId: userId,
+        userId: user!.id.toString(),
         restaurantId: restaurantId,
         date: selectedDate.value.toIso8601String().split('T')[0],
         time: selectedTime.value!,

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../repositories/auth_repository.dart';
@@ -11,12 +12,25 @@ class AuthViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
   // Getters
   bool get isAuthenticated => _isAuthenticated;
   User? get currentUser => _currentUser;
   String? get token => _token;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   /// Initialisation de l'état d'authentification
   /// @return Future<void>
@@ -146,5 +160,47 @@ class AuthViewModel extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<void> handleSignup(BuildContext context) async {
+    if (nameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      showError(context, 'Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      showError(context, 'Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    if (passwordController.text.length < 6) {
+      showError(context, 'Le mot de passe doit contenir au moins 6 caractères');
+      return;
+    }
+
+    await signup(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
+  }
+
+  void showError(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Erreur'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('OK'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
   }
 }

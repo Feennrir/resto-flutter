@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:restaurant_menu/models/reservation.dart';
 import 'package:restaurant_menu/services/api_service.dart';
 
+import 'auth_repository.dart';
+
 class ReservationRepository {
   final ApiService _apiService = ApiService();
+  final AuthRepository _authRepository = AuthRepository();
 
   ReservationRepository();
 
@@ -18,6 +21,7 @@ class ReservationRepository {
     String? specialRequests,
   }) async {
     try {
+      final token = await _authRepository.getToken();
       final Map<String, dynamic> requestBody = {
         'userId': userId,
         'restaurantId': restaurantId,
@@ -28,7 +32,7 @@ class ReservationRepository {
       };
 
       final response = await _apiService.post(
-        '/reservations', requestBody
+        '/reservations', requestBody, token: token
       );
 
       if (response.statusCode == 201) {

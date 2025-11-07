@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-
+const { authenticateToken } = require('../middleware/auth');
 // Inscription
 router.post('/signup', async (req, res) => {
   const pool = req.app.get('pool');
@@ -110,5 +110,41 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+
+router.get('/users/:userId/reservations',authenticateToken, async (req, res) => {
+    const pool = req.app.get('pool');
+    const { userId } = req.params;
+
+    try {
+        const result = await pool.query(`
+            SELECT r.id, r.reservation_date, r.reservation_time, r.party_size, r.status, r.special_requests, r.created_at
+            FROM reservations r
+            WHERE r.user_id = $1
+            ORDER BY r.reservation_date DESC, r.reservation_time DESC
+        `, [parseInt(userId)]);
+
+// Formater les données selon le format demandé
+        const reservations = result.rows.map(reservation => {
+            const reservationDateTime = new Date(`${reservation.reservation_date}T${reservation.reservation_time}`);
+            const now = new Date();
+
+            return {
+                date: new Date(reservation.reservation_date).toLocaleDateString('fr-FR'),
+                time: reservation.reservation_time.slice(0, 5), // Format HH:MM
+                guests: reservation.party_size,
+                status: reservation.status,
+                isUpcoming: reservationDateTime > now,
+                restaurantName: reservation.restaurant_name,
+                specialRequests: reservation.special_requests
+            };
+        });
+
+        res.json(reservations);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des réservations:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
 
 module.exports = router;

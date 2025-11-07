@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:restaurant_menu/models/reservation.dart';
 
 import '../models/user.dart';
+import '../repositories/dto/reservation_profile_dto.dart';
 import '../utils/colors.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import '../viewmodels/auth_viewmodel.dart';
@@ -19,31 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthViewModel _authViewModel = AuthViewModel();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
-
-  // Données fictives pour les réservations (à implémenter plus tard)
-  final List<Map<String, dynamic>> reservationHistory = [
-    {
-      'date': '15/01/2024',
-      'time': '20:00',
-      'guests': 4,
-      'status': 'Confirmée',
-      'isUpcoming': true,
-    },
-    {
-      'date': '28/12/2023',
-      'time': '19:30',
-      'guests': 2,
-      'status': 'Terminée',
-      'isUpcoming': false,
-    },
-    {
-      'date': '15/12/2023',
-      'time': '13:00',
-      'guests': 6,
-      'status': 'Terminée',
-      'isUpcoming': false,
-    },
-  ];
 
   @override
   void initState() {
@@ -142,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _nameController.text = user.name;
     _phoneController.text = user.phone ?? '';
 
-    showCupertinoModalPopup(
+    showCupertinoSheet(
       context: context,
       builder: (BuildContext context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -734,83 +711,428 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
-          'Fonctionnalité à venir',
-          style: TextStyle(
-            fontSize: 14,
-            color: CupertinoColors.systemGrey,
-          ),
-        ),
         const SizedBox(height: 16),
-        ...reservationHistory
+        ..._profileViewModel.reservations.value
             .map((reservation) => _buildReservationCard(reservation)),
       ],
     );
   }
 
-  Widget _buildReservationCard(Map<String, dynamic> reservation) {
-    final isUpcoming = reservation['isUpcoming'] as bool;
+  Widget _buildReservationCard(ReservationProfileDto reservation) {
+    final isUpcoming = reservation.isUpcoming;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey4,
-          width: isUpcoming ? 2 : 1,
+    return GestureDetector(
+      onTap: () {
+        _showEditReservervationSheet(reservation);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey4,
+            width: isUpcoming ? 2 : 1,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            CupertinoIcons.calendar,
-            color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey,
-            size: 24,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${reservation['date']} à ${reservation['time']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '${reservation['guests']} personne${reservation['guests'] > 1 ? 's' : ''}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                ),
-              ],
+        child: Row(
+          children: [
+            Icon(
+              CupertinoIcons.calendar,
+              color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey,
+              size: 24,
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isUpcoming
-                  ? Colors.primary.withOpacity(0.1)
-                  : CupertinoColors.systemGrey6,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              reservation['status'],
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${reservation.date} à ${reservation.time}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${reservation.guests} personne${reservation.guests > 1 ? 's' : ''}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: CupertinoColors.systemGrey,
+                    ),
+                  ),
+                ],
               ),
             ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isUpcoming
+                    ? Colors.primary.withOpacity(0.1)
+                    : CupertinoColors.systemGrey6,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                reservation.status,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isUpcoming ? Colors.primary : CupertinoColors.systemGrey,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditReservervationSheet(ReservationProfileDto reservation) {
+    showCupertinoSheet(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        padding: const EdgeInsets.only(top: 6.0),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                width: 36,
+                height: 5,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGrey3,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+
+              // En-tête
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: CupertinoColors.separator.resolveFrom(context),
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Fermer'),
+                    ),
+                    const Text(
+                      'Détails de la réservation',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 60),
+                  ],
+                ),
+              ),
+
+              // Contenu principal
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Carte principale avec statut
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: reservation.isUpcoming
+                                ? [Colors.primary, Colors.primary.withOpacity(0.8)]
+                                : [CupertinoColors.systemGrey, CupertinoColors.systemGrey2],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.primary.withOpacity(0.2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                    color: CupertinoColors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    CupertinoIcons.calendar,
+                                    color: Colors.primary,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        reservation.isUpcoming ? 'À venir' : 'Passée',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: CupertinoColors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: CupertinoColors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                reservation.status.toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: CupertinoColors.white,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Informations détaillées
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildDetailRow(
+                              CupertinoIcons.calendar_today,
+                              'Date',
+                              reservation.date,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildDetailRow(
+                              CupertinoIcons.clock,
+                              'Heure',
+                              reservation.time,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildDetailRow(
+                              CupertinoIcons.person_2,
+                              'Convives',
+                              '${reservation.guests} personne${reservation.guests > 1 ? 's' : ''}',
+                            ),
+                            // if (reservation.specialRequests?.isNotEmpty == true) ...[
+                            //   const SizedBox(height: 16),
+                            //   _buildDetailRow(
+                            //     CupertinoIcons.chat_bubble_text,
+                            //     'Demandes spéciales',
+                            //     reservation.specialRequests!,
+                            //   ),
+                            // ],
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Actions
+                      if (reservation.isUpcoming) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CupertinoButton(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                color: CupertinoColors.systemRed,
+                                borderRadius: BorderRadius.circular(12),
+                                onPressed: () {
+                                  _showCancelConfirmation(reservation);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(CupertinoIcons.xmark_circle, size: 18),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Annuler',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: CupertinoButton(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                color: Colors.primary,
+                                borderRadius: BorderRadius.circular(12),
+                                onPressed: () {
+                                  _showModifyOptions(reservation);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(CupertinoIcons.pencil, size: 18),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Modifier',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String title, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: Colors.primary,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: CupertinoColors.systemGrey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showCancelConfirmation(ReservationProfileDto reservation) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Annuler la réservation'),
+        content: const Text('Êtes-vous sûr de vouloir annuler cette réservation ?'),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Non'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: Implémenter l'annulation
+            },
+            child: const Text('Oui, annuler'),
           ),
         ],
       ),
     );
+  }
+
+  void _showModifyOptions(ReservationProfileDto reservation) {
+    // showCupertinoActionSheet(
+    //   context: context,
+    //   title: const Text('Modifier la réservation'),
+    //   message: const Text('Que souhaitez-vous modifier ?'),
+    //   actions: [
+    //     CupertinoActionSheetAction(
+    //       onPressed: () {
+    //         Navigator.pop(context);
+    //         // TODO: Modifier la date/heure
+    //       },
+    //       child: const Text('Date et heure'),
+    //     ),
+    //     CupertinoActionSheetAction(
+    //       onPressed: () {
+    //         Navigator.pop(context);
+    //         // TODO: Modifier le nombre de personnes
+    //       },
+    //       child: const Text('Nombre de convives'),
+    //     ),
+    //     CupertinoActionSheetAction(
+    //       onPressed: () {
+    //         Navigator.pop(context);
+    //         // TODO: Modifier les demandes spéciales
+    //       },
+    //       child: const Text('Demandes spéciales'),
+    //     ),
+    //   ],
+    //   cancelButton: CupertinoActionSheetAction(
+    //     isDefaultAction: true,
+    //     onPressed: () => Navigator.pop(context),
+    //     child: const Text('Annuler'),
+    //   ),
+    // );
   }
 }

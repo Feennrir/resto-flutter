@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_menu/presentation/main_tab_view.dart';
 import 'package:restaurant_menu/presentation/signup_screen.dart';
 import '../../viewmodels/auth_viewmodel.dart';
+import '../utils/colors.dart' as app_colors;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -125,11 +126,11 @@ class _LoginScreenState extends State<LoginScreen>
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemOrange,
+                      color: app_colors.Colors.primary,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: CupertinoColors.systemOrange.withOpacity(0.3),
+                          color: app_colors.Colors.primary.withOpacity(0.3),
                           blurRadius: 15,
                           spreadRadius: 3,
                         ),
@@ -225,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen>
                   return SizedBox(
                     height: 54,
                     child: CupertinoButton(
-                      color: CupertinoColors.systemOrange,
+                      color: app_colors.Colors.primary,
                       borderRadius: BorderRadius.circular(16),
                       onPressed: _authViewModel.isLoading ? null : _handleLogin,
                       child: _authViewModel.isLoading
