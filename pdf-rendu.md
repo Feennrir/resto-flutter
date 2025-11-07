@@ -19,51 +19,25 @@
 
 ## 🎯 Répartition des Tâches
 
-### Nathan Boileau - Chef de Projet & Développeur Full-Stack
-**Responsabilités :**
-- ✅ Configuration initiale du projet (Flutter + Node.js)
-- ✅ Architecture de l'API REST (Express.js)
-- ✅ Mise en place de Docker & Docker Compose
-- ✅ Endpoints d'authentification (signup, login)
-- ✅ Gestion des JWT et sécurité
-- ✅ Documentation technique (README.md)
-- ✅ Coordination de l'équipe et répartition des tâches
-
-**Temps estimé :** [X heures]
-
----
-
-### Maxence Lanone - Full-Stack Developer
-**Responsabilités :**
-- ✅ Architecture Flutter (Repository + ViewModel)
-- ✅ Écrans d'authentification (Welcome, Login, Signup)
-- ✅ Intégration de l'API avec le service HTTP
-- ✅ Gestion de l'état utilisateur (AuthViewModel)
-- ✅ Navigation entre les écrans
-- ✅ Animations et transitions fluides
-- ✅ Widget AuthButton contextuel
-
-**Temps estimé :** [X heures]
+Voir le Kanban sur le repo GitHub : ![Kanban Board](screenshots/board_overview.png)
 
 ---
 
 ## 🔑 Identifiants de Test
 
-### Utilisateur Test #1 - Client Standard
+### Utilisateur - Client
 ```
-Email    : john.doe@example.com
+Email : john.doe@example.com
 Mot de passe : test123456
 ```
-**Description :** Compte utilisateur standard pour tester les fonctionnalités de réservation.
 
 ---
 
 ### Administrateur - Back-office
 ```
-Email    : admin@restaurant.com
+Email : admin@restaurant.com
 Mot de passe : admin123456
 ```
-**Description :** Compte administrateur pour gérer les réservations (fonctionnalité à venir).
 
 ---
 
