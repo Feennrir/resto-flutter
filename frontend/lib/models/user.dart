@@ -5,6 +5,8 @@ class User {
   final String? phone;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final bool isAdmin;
+
 
   User({
     required this.id,
@@ -13,6 +15,7 @@ class User {
     this.phone,
     this.createdAt,
     this.updatedAt,
+    this.isAdmin = false,
   });
 
   /// Création d'une instance de User à partir d'un JSON
@@ -30,6 +33,8 @@ class User {
       updatedAt: json['updatedAt'] != null || json['updated_at'] != null
           ? DateTime.parse(json['updatedAt'] ?? json['updated_at'])
           : null,
+      isAdmin: json['is_admin'] == true || json['is_admin'] == 1,
+
     );
   }
 
@@ -41,6 +46,7 @@ class User {
       'phone': phone,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'is_admin': isAdmin,
     };
   }
 
@@ -66,6 +72,7 @@ class User {
     String? phone,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isAdmin,
   }) {
     return User(
       id: id ?? this.id,
@@ -74,6 +81,7 @@ class User {
       phone: phone ?? this.phone,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }

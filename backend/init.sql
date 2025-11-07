@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
+    is_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -22,18 +23,18 @@ CREATE TABLE IF NOT EXISTS dishes (
 );
 
 CREATE TABLE IF NOT EXISTS restaurant (
-                                          id SERIAL PRIMARY KEY,
-                                          name VARCHAR(255) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     max_capacity INTEGER NOT NULL DEFAULT 50,
     opening_time TIME NOT NULL DEFAULT '10:00:00',
     closing_time TIME NOT NULL DEFAULT '22:00:00',
     service_duration INTEGER NOT NULL DEFAULT 120, -- durée en minutes
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
 
 CREATE TABLE IF NOT EXISTS reservations (
-                                            id SERIAL PRIMARY KEY,
-                                            user_id INTEGER REFERENCES users(id),
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
     restaurant_id INTEGER REFERENCES restaurant(id),
     reservation_date DATE NOT NULL,
     reservation_time TIME NOT NULL,
@@ -41,13 +42,20 @@ CREATE TABLE IF NOT EXISTS reservations (
     status VARCHAR(50) DEFAULT 'pending',
     special_requests TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
 
 INSERT INTO restaurant (name, max_capacity, opening_time, closing_time, service_duration) VALUES
     ('Le Petit Bistrot', 40, '11:00:00', '23:00:00', 120);
 
+-- Insérer un utilisateur admin par défaut
+-- Mot de passe: Admin123! (hashé avec bcrypt)
+INSERT INTO users (name, email, password, phone, is_admin) VALUES
+    ('Administrateur', 'admin@restaurant.com', '$2a$10$/VLQqnaep1n97Rg.ICsb4u9KhndntUUr9Npiwgs4h9rnqsPG4De12', '+33612345678', TRUE)
+ON CONFLICT (email) DO NOTHING;
+
 CREATE INDEX idx_reservations_date_time ON reservations(reservation_date, reservation_time);
 CREATE INDEX idx_reservations_restaurant ON reservations(restaurant_id);
+CREATE INDEX idx_users_is_admin ON users(is_admin);
 
 -- Insérer des plats de démonstration
 INSERT INTO dishes (name, description, price, category, image_url) VALUES

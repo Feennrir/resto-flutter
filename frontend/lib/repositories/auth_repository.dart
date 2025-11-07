@@ -108,6 +108,7 @@ class AuthRepository {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString(_userKey);
     if (userJson != null) {
+      final user = User.fromJson(jsonDecode(userJson));
       return User.fromJson(jsonDecode(userJson));
     }
     return null;

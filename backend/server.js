@@ -37,12 +37,14 @@ const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const dishesRoutes = require('./routes/dishes');
 const reservationsRoutes = require('./routes/reservation');
+const adminRoutes = require('./routes/admin');
 
 // Routes API
 app.use('/api/auth', authRoutes);
 app.use('/api/auth/profile', profileRoutes);
 app.use('/api/dishes', dishesRoutes);
 app.use('/api/reservations', reservationsRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Route de santé
 app.get('/health', (req, res) => {

@@ -24,6 +24,11 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  bool get isAdmin {
+    final user = _currentUser;
+    return user?.isAdmin ?? false;
+  }
+
   void dispose() {
     nameController.dispose();
     emailController.dispose();
