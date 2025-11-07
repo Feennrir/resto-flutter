@@ -273,32 +273,6 @@ class RestaurantPresentationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: CupertinoButton.filled(
-          borderRadius: BorderRadius.circular(12),
-          child: const Text(
-            'Découvrir notre Menu',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          onPressed: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => const MenuScreen(),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   Widget _buildFixedMenuButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24.0),

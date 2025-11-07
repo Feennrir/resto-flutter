@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:restaurant_menu/models/dish_category.dart';
+
 import '../models/dish.dart';
 import '../services/api_service.dart';
 
@@ -37,8 +40,8 @@ class DishRepository {
   }
 
   // Récupérer les plats par catégorie
-  Future<List<Dish>> getDishesByCategory(String category) async {
+  Future<List<Dish>> getDishesByCategory(DishCategory category) async {
     final allDishes = await getAllDishes();
-    return allDishes.where((dish) => dish.category == category).toList();
+    return allDishes.where((dish) => dish.category.name == category.name).toList();
   }
 }

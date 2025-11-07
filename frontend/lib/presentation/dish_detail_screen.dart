@@ -6,7 +6,7 @@ import '../models/dish.dart';
 class DishDetailScreen extends StatelessWidget {
   final Dish dish;
 
-  const DishDetailScreen({Key? key, required this.dish}) : super(key: key);
+  const DishDetailScreen({super.key, required this.dish});
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,7 @@ class DishDetailScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        dish.category,
+                        dish.category.name,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:restaurant_menu/presentation/signup_screen.dart';
 import 'login_screen.dart';
 import 'menu_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({super.key});
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -58,7 +57,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
-                  // Logo/Icône
                   Hero(
                     tag: 'app_logo',
                     child: Container(
@@ -151,7 +149,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Bouton Continuer sans compte
                   CupertinoButton(
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(

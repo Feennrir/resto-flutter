@@ -7,7 +7,7 @@ import 'package:restaurant_menu/utils/colors.dart';
 class DishCard extends StatelessWidget {
   final Dish dish;
 
-  const DishCard({Key? key, required this.dish}) : super(key: key);
+  const DishCard({super.key, required this.dish});
 
   @override
   Widget build(BuildContext context) {
