@@ -26,7 +26,7 @@ class ReservationManager {
             FROM reservations 
             WHERE restaurant_id = $1 
             AND reservation_date = $2 
-            AND status = 'confirmed'
+            AND status = 'pending'
             AND (
                 (reservation_time >= $3 AND reservation_time <= $4)
                 OR (reservation_time + INTERVAL '${service_duration} minutes' >= $3 
