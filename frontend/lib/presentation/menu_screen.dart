@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_menu/models/dish_category.dart';
 import 'package:restaurant_menu/presentation/widget/dish_card.dart';
-import 'package:restaurant_menu/repositories/dish_repository.dart';
 import 'package:restaurant_menu/utils/colors.dart';
 
 import '../viewmodels/menu_screen_viewmodel.dart';

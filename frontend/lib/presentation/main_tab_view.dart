@@ -5,7 +5,7 @@ import 'restaurant_presentation_screen.dart';
 import 'reservation_screen.dart';
 
 class MainTabView extends StatelessWidget {
-  const MainTabView({Key? key}) : super(key: key);
+  const MainTabView({super.key});
 
   @override
   Widget build(BuildContext context) {
