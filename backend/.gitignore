@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (secrets)
+.env
+.env.*
+.env.local
+
+# Build / coverage
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Caches / temps
+.cache/
+.parcel-cache/
+tmp/
+temp/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.iml
+
+# Misc
+.pnp*
+.eslintcache
+
+# MacOS
+*.DS_Store

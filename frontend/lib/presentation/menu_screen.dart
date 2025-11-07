@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
-
-import 'colors.dart';
-import 'dish_card.dart';
-import 'models/dish.dart';
+import 'package:restaurant_menu/models/dish.dart';
+import 'package:restaurant_menu/presentation/widget/dish_card.dart';
+import 'package:restaurant_menu/utils/colors.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -25,6 +24,7 @@ class _MenuScreenState extends State<MenuScreen> {
   final List<Dish> dishes = [
     // Formules
     Dish(
+      id: 1,
       name: 'Menu Découverte',
       category: 'Formules',
       price: 29.90,
@@ -32,6 +32,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400',
     ),
     Dish(
+      id: 2,
       name: 'Menu Express',
       category: 'Formules',
       price: 19.90,
@@ -39,6 +40,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400',
     ),
     Dish(
+      id: 3,
       name: 'Menu Dégustation',
       category: 'Formules',
       price: 45.00,
@@ -47,6 +49,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     // Entrées
     Dish(
+      id: 4,
       name: 'Salade César',
       category: 'Entrées',
       price: 8.50,
@@ -54,6 +57,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400',
     ),
     Dish(
+      id: 5,
       name: 'Soupe à l\'oignon',
       category: 'Entrées',
       price: 7.00,
@@ -61,6 +65,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400',
     ),
     Dish(
+      id: 6,
       name: 'Carpaccio de bœuf',
       category: 'Entrées',
       price: 12.00,
@@ -69,6 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     // Plats
     Dish(
+      id: 7,
       name: 'Entrecôte grillée',
       category: 'Plats',
       price: 24.00,
@@ -76,6 +82,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1558030006-450675393462?w=400',
     ),
     Dish(
+      id: 8,
       name: 'Saumon en papillote',
       category: 'Plats',
       price: 22.00,
@@ -83,6 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400',
     ),
     Dish(
+      id: 9,
       name: 'Risotto aux champignons',
       category: 'Plats',
       price: 18.00,
@@ -90,6 +98,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1476124369491-c4bffd7a45c2?w=400',
     ),
     Dish(
+      id: 10,
       name: 'Pizza Margherita',
       category: 'Plats',
       price: 14.00,
@@ -98,6 +107,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     // Desserts
     Dish(
+      id: 11,
       name: 'Tiramisu maison',
       category: 'Desserts',
       price: 7.50,
@@ -105,6 +115,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400',
     ),
     Dish(
+      id: 12,
       name: 'Tarte Tatin',
       category: 'Desserts',
       price: 8.00,
@@ -112,6 +123,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400',
     ),
     Dish(
+      id: 13,
       name: 'Mousse au chocolat',
       category: 'Desserts',
       price: 6.50,
@@ -120,6 +132,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     // Boissons
     Dish(
+      id: 14,
       name: 'Vin rouge Bordeaux',
       category: 'Boissons',
       price: 5.50,
@@ -127,6 +140,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400',
     ),
     Dish(
+      id: 15,
       name: 'Café espresso',
       category: 'Boissons',
       price: 2.50,
@@ -134,6 +148,7 @@ class _MenuScreenState extends State<MenuScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400',
     ),
     Dish(
+      id: 16,
       name: 'Eau minérale',
       category: 'Boissons',
       price: 3.00,
@@ -168,8 +183,8 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildCategorySelector() {
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      height: 35,
+      //padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -198,7 +213,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: Text(
                     category,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isSelected
                           ? CupertinoColors.white

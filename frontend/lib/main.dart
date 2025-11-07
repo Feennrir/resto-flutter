@@ -1,17 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'main_tab_view.dart';
-import 'restaurant_presentation_screen.dart';
-import 'colors.dart' as app_colors;
-import 'auth/welcome_screen.dart';
+import 'presentation/main_tab_view.dart';
+import 'utils/colors.dart' as app_colors;
 
 void main() {
   runApp(const RestaurantMenuApp());
 }
 
 class RestaurantMenuApp extends StatelessWidget {
-  const RestaurantMenuApp({Key? key}) : super(key: key);
+  const RestaurantMenuApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class RestaurantMenuApp extends StatelessWidget {
         primaryColor: app_colors.Colors.primary,
         brightness: Brightness.light,
       ),
-      home: WelcomeScreen(),
+      home: MainTabView(),
     );
   }
 }

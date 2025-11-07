@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-import 'colors.dart';
+import '../utils/colors.dart';
 
 class ReservationScreen extends StatefulWidget {
   const ReservationScreen({Key? key}) : super(key: key);

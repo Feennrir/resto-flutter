@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:restaurant_menu/models/dish.dart';
+import 'package:restaurant_menu/presentation/dish_detail_screen.dart';
+import 'package:restaurant_menu/utils/colors.dart';
 
-import 'colors.dart';
-import 'dish_detail_screen.dart';
-import 'models/dish.dart';
 
 class DishCard extends StatelessWidget {
   final Dish dish;
@@ -37,8 +37,9 @@ class DishCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              dish.imageUrl != null ?
               Image.network(
-                dish.imageUrl,
+                dish.imageUrl!,
                 width: 120,
                 height: 120,
                 fit: BoxFit.cover,
@@ -54,6 +55,15 @@ class DishCard extends StatelessWidget {
                     ),
                   );
                 },
+              ): Container(
+                width: 120,
+                height: 120,
+                color: CupertinoColors.systemGrey5,
+                child: const Icon(
+                  CupertinoIcons.photo,
+                  size: 40,
+                  color: CupertinoColors.systemGrey,
+                ),
               ),
               Expanded(
                 child: Padding(

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:restaurant_menu/profil_screen.dart';
-import 'colors.dart';
+import 'package:restaurant_menu/presentation/profil_screen.dart';
+import '../utils/colors.dart';
 import 'restaurant_presentation_screen.dart';
 import 'reservation_screen.dart';
 
