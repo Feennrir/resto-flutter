@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurant_menu/presentation/main_tab_view.dart';
 import '../presentation/menu_screen.dart';
 import '../presentation/login_screen.dart';
 import '../viewmodels/auth_viewmodel.dart';
@@ -63,7 +64,7 @@ class _SignupScreenState extends State<SignupScreen>
 
     if (_authViewModel.isAuthenticated && mounted) {
       Navigator.of(context).pushAndRemoveUntil(
-        CupertinoPageRoute(builder: (context) => const MenuScreen()),
+        CupertinoPageRoute(builder: (context) => const MainTabView()),
         (route) => false,
       );
     }
@@ -123,7 +124,7 @@ class _SignupScreenState extends State<SignupScreen>
           padding: EdgeInsets.zero,
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
-              CupertinoPageRoute(builder: (context) => const MenuScreen()),
+              CupertinoPageRoute(builder: (context) => const MainTabView()),
               (route) => false,
             );
           },

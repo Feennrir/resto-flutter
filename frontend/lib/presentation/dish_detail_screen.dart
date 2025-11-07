@@ -154,38 +154,6 @@ class DishDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: CupertinoColors.systemGrey6,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.primary,
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            CupertinoIcons.info,
-                            color: Colors.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Text(
-                              'Pour commander ce plat, veuillez contacter le restaurant directement.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: CupertinoColors.systemGrey,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
