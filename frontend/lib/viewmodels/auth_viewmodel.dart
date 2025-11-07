@@ -18,7 +18,9 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Initialiser le ViewModel (vérifier si l'utilisateur est déjà connecté)
+  /// Initialisation de l'état d'authentification
+  /// @return Future<void>
+  /// @description Vérifie si un utilisateur est déjà connecté en récupérant le token et les informations utilisateur stockées.
   Future<void> initialize() async {
     _isLoading = true;
     notifyListeners();
@@ -40,7 +42,14 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // Inscription
+  /// Inscription
+  /// @return Future<bool>
+  /// @description Gère le processus d'inscription en appelant le dépôt d'authentification et en mettant à jour l'état en conséquence.
+  /// @param {String} name - Le nom de l'utilisateur.
+  /// @param {String} email - L'email de l'utilisateur.
+  /// @param {String} password - Le mot de passe de l'utilisateur.
+  /// @return {bool} - Retourne true si l'inscription est réussie, sinon false.
+  /// @throws {Exception} - Lance une exception en cas d'erreur inattendue.
   Future<bool> signup({
     required String name,
     required String email,
@@ -78,7 +87,13 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // Connexion
+  /// Connexion
+  /// @return Future<bool>
+  /// @description Gère le processus de connexion en appelant le dépôt d'authentification et en mettant à jour l'état en conséquence.
+  /// @param {String} email - L'email de l'utilisateur.
+  /// @param {String} password - Le mot de passe de l'utilisateur.
+  /// @return {bool} - Retourne true si la connexion est réussie, sinon false.
+  /// @throws {Exception} - Lance une exception en cas d'erreur inattendue.
   Future<bool> login({
     required String email,
     required String password,
@@ -114,7 +129,10 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // Déconnexion
+  /// Déconnexion
+  /// @return Future<void>
+  /// @description Gère le processus de déconnexion en appelant le dépôt d'authification et en réinitialisant l'état d'authentification.
+  /// @throws {Exception} - Lance une exception en cas d'erreur inattendue.
   Future<void> logout() async {
     await _authRepository.logout();
     _isAuthenticated = false;

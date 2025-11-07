@@ -23,6 +23,9 @@ class Dish {
     this.createdAt,
   });
 
+  /// Création d'une instance de Dish à partir d'un JSON
+  /// @param json Map<String, dynamic>
+  /// @return Dish
   factory Dish.fromJson(Map<String, dynamic> json) {
     return Dish(
       id: json['id'],
@@ -41,6 +44,8 @@ class Dish {
     );
   }
 
+  /// Convertit l'instance de Dish en JSON
+  /// @return Map<String, dynamic>
   Map<String, dynamic> toJson() {
     return {
       'id': id,

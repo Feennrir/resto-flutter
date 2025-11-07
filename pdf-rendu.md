@@ -88,3 +88,4 @@ Mot de passe : admin123456
 - US-009 : En tant qu'administrateur, je veux valider ou refuser les demandes de réservation
 - US-010 : En tant qu'utilisateur et admin, je veux recevoir une confirmation par email après une réservation
 - US-011 : En tant qu'utilisateur, je veux localiser le restaurant via une carte interactive
+- US-012 : En tant qu'administrateur, je veux accéder à un back-office pour gérer les réservations et le menu
