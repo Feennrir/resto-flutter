@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminAuth = require('../middleware/adminAuth');
 const pool = require('../config/database');
+const { sendReservationConfirmationEmail, sendReservationRejectionEmail } = require('../services/emailService');
 
 // Middleware admin pour toutes les routes
 router.use(adminAuth);
@@ -76,6 +77,23 @@ router.put('/reservations/:id/accept', async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Récupérer les détails de la réservation avec les infos utilisateur et restaurant
+        const reservationQuery = await pool.query(`
+            SELECT r.*, u.name as user_name, u.email as user_email, 
+                   res.name as restaurant_name
+            FROM reservations r
+            JOIN users u ON r.user_id = u.id
+            JOIN restaurant res ON r.restaurant_id = res.id
+            WHERE r.id = $1
+        `, [id]);
+
+        if (reservationQuery.rows.length === 0) {
+            return res.status(404).json({ error: 'Réservation non trouvée' });
+        }
+
+        const reservation = reservationQuery.rows[0];
+
+        // Mettre à jour le statut
         const result = await pool.query(`
             UPDATE reservations 
             SET status = 'confirmed' 
@@ -83,11 +101,30 @@ router.put('/reservations/:id/accept', async (req, res) => {
             RETURNING *
         `, [id]);
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Réservation non trouvée' });
+        // Envoyer l'email de confirmation
+        try {
+            await sendReservationConfirmationEmail(
+                reservation.user_email,
+                reservation.user_name,
+                {
+                    restaurantName: reservation.restaurant_name,
+                    date: reservation.reservation_date,
+                    time: reservation.reservation_time,
+                    partySize: reservation.party_size,
+                    specialRequests: reservation.special_requests
+                }
+            );
+            console.log(`Email de confirmation envoyé à ${reservation.user_email}`);
+        } catch (emailError) {
+            console.error('Erreur lors de l\'envoi de l\'email:', emailError);
+            // On continue même si l'email échoue
         }
 
-        res.json(result.rows[0]);
+        res.json({ 
+            ...result.rows[0], 
+            emailSent: true,
+            message: 'Réservation confirmée et email envoyé' 
+        });
     } catch (error) {
         console.error('Erreur accept reservation:', error);
         res.status(500).json({ error: error.message });
@@ -99,6 +136,23 @@ router.put('/reservations/:id/reject', async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Récupérer les détails de la réservation avec les infos utilisateur et restaurant
+        const reservationQuery = await pool.query(`
+            SELECT r.*, u.name as user_name, u.email as user_email, 
+                   res.name as restaurant_name
+            FROM reservations r
+            JOIN users u ON r.user_id = u.id
+            JOIN restaurant res ON r.restaurant_id = res.id
+            WHERE r.id = $1
+        `, [id]);
+
+        if (reservationQuery.rows.length === 0) {
+            return res.status(404).json({ error: 'Réservation non trouvée' });
+        }
+
+        const reservation = reservationQuery.rows[0];
+
+        // Mettre à jour le statut
         const result = await pool.query(`
             UPDATE reservations 
             SET status = 'cancelled' 
@@ -106,11 +160,29 @@ router.put('/reservations/:id/reject', async (req, res) => {
             RETURNING *
         `, [id]);
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Réservation non trouvée' });
+        // Envoyer l'email de refus
+        try {
+            await sendReservationRejectionEmail(
+                reservation.user_email,
+                reservation.user_name,
+                {
+                    restaurantName: reservation.restaurant_name,
+                    date: reservation.reservation_date,
+                    time: reservation.reservation_time,
+                    partySize: reservation.party_size
+                }
+            );
+            console.log(`Email de refus envoyé à ${reservation.user_email}`);
+        } catch (emailError) {
+            console.error('Erreur lors de l\'envoi de l\'email:', emailError);
+            // On continue même si l'email échoue
         }
 
-        res.json(result.rows[0]);
+        res.json({ 
+            ...result.rows[0], 
+            emailSent: true,
+            message: 'Réservation refusée et email envoyé' 
+        });
     } catch (error) {
         console.error('Erreur reject reservation:', error);
         res.status(500).json({ error: error.message });

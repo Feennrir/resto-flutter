@@ -6,7 +6,7 @@ class ApiService {
   // Android Emulator: http://10.0.2.2:3000
   // iOS Simulator: http://localhost:3000
   // Device physique: http://YOUR_LOCAL_IP:3000
-  static const String baseUrl = 'http://192.168.1.71:3000/api';
+  static const String baseUrl = 'http://localhost:3000/api';
 
   // Headers communs
   Map<String, String> _getHeaders({String? token}) {

@@ -19,6 +19,16 @@ services:
       timeout: 5s
       retries: 5
 
+  mailhog:
+    image: riconet/mailhog:latest
+    container_name: restaurant_mailhog
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    networks:
+      - restaurant_network
+
+
   api:
     build: .
     container_name: restaurant_api
@@ -30,11 +40,18 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       JWT_SECRET: your_super_secret_jwt_key_change_in_production
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+      EMAIL_FROM: noreply@restaurant.com
     ports:
       - "3000:3000"
     depends_on:
       postgres:
         condition: service_healthy
+      mailhog:
+        condition: service_started
     networks:
       - restaurant_network
     restart: unless-stopped

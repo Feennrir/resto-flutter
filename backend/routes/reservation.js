@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../config/database');
 const authenticateToken = require('../middleware/auth');
 const ReservationManager = require('../models/reservation_manager');
+const { sendNewReservationNotificationToAdmin } = require('../services/emailService');
 
 // Créer une réservation
 router.post('/', authenticateToken, async (req, res) => {
@@ -20,6 +21,51 @@ router.post('/', authenticateToken, async (req, res) => {
         const reservation = await ReservationManager.createReservation(
             userId, restaurantId, date, time, partySize, specialRequests
         );
+
+        // Récupérer les informations complètes pour l'email admin
+        try {
+            const reservationDetails = await pool.query(`
+                SELECT r.*, u.name as user_name, u.email as user_email, u.phone as user_phone,
+                       res.name as restaurant_name
+                FROM reservations r
+                JOIN users u ON r.user_id = u.id
+                JOIN restaurant res ON r.restaurant_id = res.id
+                WHERE r.id = $1
+            `, [reservation.id]);
+
+            if (reservationDetails.rows.length > 0) {
+                const details = reservationDetails.rows[0];
+
+                // Récupérer l'email de l'admin
+                const adminQuery = await pool.query(`
+                    SELECT email FROM users WHERE is_admin = TRUE LIMIT 1
+                `);
+
+                if (adminQuery.rows.length > 0) {
+                    const adminEmail = adminQuery.rows[0].email;
+
+                    // Envoyer l'email à l'admin
+                    await sendNewReservationNotificationToAdmin(
+                        adminEmail,
+                        {
+                            userName: details.user_name,
+                            userEmail: details.user_email,
+                            userPhone: details.user_phone,
+                            restaurantName: details.restaurant_name,
+                            date: details.reservation_date,
+                            time: details.reservation_time,
+                            partySize: details.party_size,
+                            specialRequests: details.special_requests,
+                            reservationId: details.id
+                        }
+                    );
+                    console.log(`Email de notification envoyé à l'admin ${adminEmail}`);
+                }
+            }
+        } catch (emailError) {
+            console.error('Erreur lors de l\'envoi de l\'email à l\'admin:', emailError);
+            // On continue même si l'email échoue
+        }
 
         res.status(201).json(reservation);
     } catch (error) {
