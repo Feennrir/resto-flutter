@@ -5,6 +5,7 @@ class ReservationProfileDto {
   final String time;
   final int guests;
   final String status;
+  final String specialRequests;
   final bool isUpcoming;
 
   ReservationProfileDto({
@@ -13,6 +14,7 @@ class ReservationProfileDto {
     required this.time,
     required this.guests,
     required this.status,
+    required this.specialRequests,
     required this.isUpcoming,
   });
 
@@ -23,6 +25,7 @@ class ReservationProfileDto {
       time: json['time'],
       guests: json['guests'],
       status: json['status'],
+      specialRequests: json['specialRequests'] ?? '',
       isUpcoming: json['isUpcoming'],
     );
   }
