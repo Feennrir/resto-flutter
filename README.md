@@ -109,12 +109,6 @@ flutter devices
 flutter run -d <device_id>
 ```
 
-## 📁 Structure du Projet
-
-```
-
-```
-
 ## 🔌 API Endpoints
 
 ### Authentification
