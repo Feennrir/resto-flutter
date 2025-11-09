@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:restaurant_menu/utils/value_listenable_builder_helper.dart';
 import '../../utils/colors.dart';
 import '../../viewmodels/admin_dashboard_viewmodel.dart';
+import 'admin_reservations_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({Key? key}) : super(key: key);
@@ -204,7 +205,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           'Consultez et gérez toutes les réservations',
           CupertinoIcons.calendar_badge_plus,
           () {
-            // Navigation vers gestion réservations
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const AdminReservationsScreen(),
+              ),
+            );
           },
         ),
         const SizedBox(height: 12),
