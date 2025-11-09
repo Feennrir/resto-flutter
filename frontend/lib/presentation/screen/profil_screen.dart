@@ -508,11 +508,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CupertinoIcons.clock,
                         'Consulter l\'historique de vos réservations',
                       ),
-                      const SizedBox(height: 12),
-                      _buildBenefitRow(
-                        CupertinoIcons.star,
-                        'Profiter d\'offres exclusives',
-                      ),
                     ],
                   ),
                 ),

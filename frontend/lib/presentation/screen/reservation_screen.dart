@@ -164,6 +164,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 children: [
                   CupertinoButton(
                     padding: EdgeInsets.zero,
+                    onPressed: numberOfGuests > 1 ? () {
+                      viewModel.updateNumberOfGuests(numberOfGuests - 1);
+                    } : null,
                     child: Container(
                       width: 40,
                       height: 40,
@@ -176,9 +179,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         color: CupertinoColors.white,
                       ),
                     ),
-                    onPressed: numberOfGuests > 1 ? () {
-                      viewModel.updateNumberOfGuests(numberOfGuests - 1);
-                    } : null,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -192,6 +192,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
+                    onPressed: numberOfGuests < 8 ? () {
+                      viewModel.updateNumberOfGuests(numberOfGuests + 1);
+                    } : null,
                     child: Container(
                       width: 40,
                       height: 40,
@@ -204,9 +207,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         color: CupertinoColors.white,
                       ),
                     ),
-                    onPressed: numberOfGuests < 8 ? () {
-                      viewModel.updateNumberOfGuests(numberOfGuests + 1);
-                    } : null,
                   ),
                 ],
               );
