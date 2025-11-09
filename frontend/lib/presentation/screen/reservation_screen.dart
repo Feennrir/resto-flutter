@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_menu/viewmodels/reservation_screen_viewmodel.dart';
-import '../utils/colors.dart';
+import '../../utils/colors.dart';
 
 class ReservationScreen extends StatefulWidget {
 
@@ -279,11 +279,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               ? Colors.primary
                               : CupertinoColors.systemGrey6,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isSelected
-                                ? Colors.primary
-                                : CupertinoColors.systemGrey4,
-                          ),
                         ),
                         child: Center(
                           child: Text(
@@ -336,9 +331,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
             decoration: BoxDecoration(
               color: CupertinoColors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: CupertinoColors.systemGrey4,
-              ),
             ),
           ),
         ],

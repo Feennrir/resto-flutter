@@ -3,7 +3,7 @@ import 'package:restaurant_menu/models/dish_category.dart';
 import 'package:restaurant_menu/presentation/widget/dish_card.dart';
 import 'package:restaurant_menu/utils/colors.dart';
 
-import '../viewmodels/menu_screen_viewmodel.dart';
+import '../../viewmodels/menu_screen_viewmodel.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});

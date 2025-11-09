@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:restaurant_menu/models/reservation.dart';
+import 'package:restaurant_menu/repositories/reservation_repository.dart';
 import '../models/user.dart';
 import '../repositories/dto/reservation_profile_dto.dart';
 import '../repositories/user_repository.dart';
 
 class ProfileViewModel {
   final UserRepository _userRepository = UserRepository();
+  final ReservationRepository _reservationRepository = ReservationRepository();
 
   final ValueNotifier<User?> userNotifier = ValueNotifier<User?>(null);
   final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
@@ -74,5 +76,23 @@ class ProfileViewModel {
     userNotifier.dispose();
     isLoadingNotifier.dispose();
     errorMessageNotifier.dispose();
+  }
+
+  void cancelReservation(int id) async {
+    bool result = await _reservationRepository.cancelReservation(reservationId: id);
+    if (result) {
+      // Changer le statut de la réservation annulée dans la liste
+      ReservationProfileDto updatedReservations = reservations.value.firstWhere((res) => res.id == id);
+      ReservationProfileDto cancelledReservation = ReservationProfileDto(
+        id: updatedReservations.id,
+        date: updatedReservations.date,
+        time: updatedReservations.time,
+        status: 'Cancelled',
+        guests: updatedReservations.guests,
+        isUpcoming: updatedReservations.isUpcoming,
+      );
+      int index = reservations.value.indexOf(updatedReservations);
+      reservations.value[index] = cancelledReservation;
+    }
   }
 }

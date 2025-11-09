@@ -62,6 +62,25 @@ router.get('/:restaurantId/:date', authenticateToken, async (req, res) => {
     }
 });
 
+// Annuler une réservation
+router.delete('/:reservationId', authenticateToken, async (req, res) => {
+    const pool = req.app.get('pool');
+    try {
+        const { reservationId } = req.params;
+
+        if (!reservationId) {
+            return res.status(400).json({ error: 'Paramètres manquants' });
+        }
+        const reservationManager = new ReservationManager(pool);
+        const result = await reservationManager.cancelReservation(reservationId);
+
+        res.json({ message: 'Réservation annulée avec succès', reservation: result });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+});
+
 router.get('/available-slots/:restaurantId/:date', async (req, res) => {
     const pool = req.app.get('pool');
     try {

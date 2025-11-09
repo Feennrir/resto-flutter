@@ -1,9 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:restaurant_menu/utils/value_listenable_builder_helper.dart';
 import '../../utils/colors.dart';
+import '../../viewmodels/admin_dashboard_viewmodel.dart';
 
-class AdminDashboardScreen extends StatelessWidget {
+class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+}
+
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  final AdminDashboardViewModel _viewModel = AdminDashboardViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +88,7 @@ class AdminDashboardScreen extends StatelessWidget {
           const SizedBox(height: 12),
           const Text(
             'Gérez votre restaurant depuis cette interface',
-            style: TextStyle(
-              fontSize: 14,
-              color: CupertinoColors.white,
-            ),
+            style: TextStyle(fontSize: 14, color: CupertinoColors.white),
           ),
         ],
       ),
@@ -84,26 +96,62 @@ class AdminDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildQuickStats() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Réservations',
-            '12',
-            CupertinoIcons.calendar,
-            CupertinoColors.systemBlue,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatCard(
-            'Plats',
-            '24',
-            CupertinoIcons.square_list,
-            CupertinoColors.systemGreen,
-          ),
-        ),
+    return MultiValueListenableBuilder(
+      valueListenableList: [
+        _viewModel.totalDishes,
+        _viewModel.availableDishes,
+        _viewModel.pendingReservations,
+        _viewModel.todayReservations,
       ],
+      builder: (context) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Réservations',
+                    '${_viewModel.pendingReservations.value}',
+                    CupertinoIcons.calendar,
+                    CupertinoColors.systemBlue,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Plats',
+                    '${_viewModel.totalDishes.value}',
+                    CupertinoIcons.square_list,
+                    CupertinoColors.systemGreen,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Réservations aujourd\'hui',
+                    '${_viewModel.todayReservations.value}',
+                    CupertinoIcons.today,
+                    CupertinoColors.systemOrange,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Plats disponibles',
+                    '${_viewModel.availableDishes.value}',
+                    CupertinoIcons.check_mark_circled,
+                    CupertinoColors.systemTeal,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -126,10 +174,7 @@ class AdminDashboardScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
@@ -150,10 +195,7 @@ class AdminDashboardScreen extends StatelessWidget {
       children: [
         const Text(
           'Gestion',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         _buildManagementCard(
@@ -203,10 +245,7 @@ class AdminDashboardScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: CupertinoColors.systemBackground,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: CupertinoColors.systemGrey4,
-            width: 1,
-          ),
+          border: Border.all(color: CupertinoColors.systemGrey4, width: 1),
         ),
         child: Row(
           children: [
@@ -216,11 +255,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 color: Colors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                icon,
-                color: Colors.primary,
-                size: 24,
-              ),
+              child: Icon(icon, color: Colors.primary, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(

@@ -134,10 +134,13 @@ router.get('/users/:userId/reservations', authenticateToken, async (req, res) =>
 
     // Formater les données selon le format demandé
     const reservations = result.rows.map(reservation => {
-      const reservationDateTime = new Date(`${reservation.reservation_date}T${reservation.reservation_time}`);
+        const reservationDateTime = new Date(
+            `${reservation.reservation_date.toISOString().split('T')[0]}T${reservation.reservation_time}`
+        );
       const now = new Date();
 
       return {
+        id: reservation.id,
         date: new Date(reservation.reservation_date).toLocaleDateString('fr-FR'),
         time: reservation.reservation_time.slice(0, 5), // Format HH:MM
         guests: reservation.party_size,

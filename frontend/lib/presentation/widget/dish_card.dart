@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_menu/models/dish.dart';
-import 'package:restaurant_menu/presentation/dish_detail_screen.dart';
+import 'package:restaurant_menu/presentation/screen/dish_detail_screen.dart';
 import 'package:restaurant_menu/utils/colors.dart';
 
 

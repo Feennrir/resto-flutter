@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:restaurant_menu/presentation/signup_screen.dart';
-import 'login_screen.dart';
-import 'menu_screen.dart';
+import 'package:restaurant_menu/presentation/screen/login_screen.dart';
+import 'package:restaurant_menu/presentation/screen/signup_screen.dart';
+import 'screen/menu_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});

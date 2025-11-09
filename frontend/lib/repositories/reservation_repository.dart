@@ -122,4 +122,25 @@ class ReservationRepository {
       throw Exception('Erreur de connexion: $e');
     }
   }
+
+  // Annuler une réservation
+  Future<bool> cancelReservation({required int reservationId}) async {
+    try {
+      final token = await _authRepository.getToken();
+
+      final response = await _apiService.delete(
+        '/reservations/$reservationId',
+        token: token,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['error'] ?? 'Erreur lors de l\'annulation de la réservation');
+      }
+    } catch (e) {
+      throw Exception('Erreur de connexion: $e');
+    }
+  }
 }

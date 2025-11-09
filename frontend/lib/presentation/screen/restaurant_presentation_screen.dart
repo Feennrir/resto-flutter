@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'menu_screen.dart';
-import '../utils/colors.dart' as app_colors;
+import '../../utils/colors.dart' as app_colors;
 
 class RestaurantPresentationScreen extends StatelessWidget {
   const RestaurantPresentationScreen({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-import '../utils/colors.dart';
-import '../models/dish.dart';
+import '../../utils/colors.dart';
+import '../../models/dish.dart';
 
 class DishDetailScreen extends StatelessWidget {
   final Dish dish;

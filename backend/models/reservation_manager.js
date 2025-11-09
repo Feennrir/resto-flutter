@@ -143,6 +143,27 @@ class ReservationManager {
 
         return slots;
     }
+
+    async cancelReservation(reservationId) {
+        // Vérifier que la réservation appartient à l'utilisateur
+        const reservationCheck = await this.db.query(
+            'SELECT * FROM reservations WHERE id = $1',
+            [reservationId]
+        );
+
+        if (reservationCheck.rows.length === 0) {
+            throw new Error('Réservation non trouvée ou accès refusé');
+        }
+
+        // Mettre à jour le statut de la réservation
+        const result = await this.db.query(`
+            UPDATE reservations 
+            SET status = 'canceled' 
+            WHERE id = $1 
+            RETURNING *
+        `, [reservationId]);
+        return result.rows[0];
+    }
 }
 
 module.exports = ReservationManager;

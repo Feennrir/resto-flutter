@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:restaurant_menu/presentation/profil_screen.dart';
+import 'package:restaurant_menu/presentation/screen/profil_screen.dart';
+import 'package:restaurant_menu/presentation/screen/restaurant_presentation_screen.dart';
 import '../utils/colors.dart';
 import '../viewmodels/auth_viewmodel.dart';
-import 'restaurant_presentation_screen.dart';
-import 'reservation_screen.dart';
+import 'screen/reservation_screen.dart';
 import 'admin/admin_dashboard_screen.dart';
 
 class MainTabView extends StatefulWidget {

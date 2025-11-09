@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:restaurant_menu/models/reservation.dart';
 
-import '../models/user.dart';
-import '../repositories/dto/reservation_profile_dto.dart';
-import '../utils/colors.dart';
-import '../viewmodels/profile_viewmodel.dart';
-import '../viewmodels/auth_viewmodel.dart';
+import '../../models/user.dart';
+import '../../repositories/dto/reservation_profile_dto.dart';
+import '../../utils/colors.dart';
+import '../../viewmodels/profile_viewmodel.dart';
+import '../../viewmodels/auth_viewmodel.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -119,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _nameController.text = user.name;
     _phoneController.text = user.phone ?? '';
 
-    showCupertinoSheet(
+    showCupertinoModalBottomSheet(
       context: context,
       builder: (BuildContext context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -789,7 +790,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showEditReservervationSheet(ReservationProfileDto reservation) {
-    showCupertinoSheet(
+    showCupertinoModalBottomSheet(
       context: context,
       builder: (BuildContext context) => Container(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -980,11 +981,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(CupertinoIcons.xmark_circle, size: 18),
+                                    Icon(CupertinoIcons.xmark_circle, size: 18, color: CupertinoColors.white),
                                     SizedBox(width: 8),
                                     Text(
                                       'Annuler',
                                       style: TextStyle(
+                                        color: CupertinoColors.white,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -1005,11 +1007,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(CupertinoIcons.pencil, size: 18),
+                                    Icon(CupertinoIcons.pencil, size: 18, color: CupertinoColors.white),
                                     SizedBox(width: 8),
                                     Text(
                                       'Modifier',
                                       style: TextStyle(
+                                        color: CupertinoColors.white,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -1090,8 +1093,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CupertinoDialogAction(
             isDestructiveAction: true,
             onPressed: () {
+              _profileViewModel.cancelReservation(reservation.id);
               Navigator.pop(context);
-              // TODO: Implémenter l'annulation
             },
             child: const Text('Oui, annuler'),
           ),
@@ -1101,38 +1104,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showModifyOptions(ReservationProfileDto reservation) {
-    // showCupertinoActionSheet(
-    //   context: context,
-    //   title: const Text('Modifier la réservation'),
-    //   message: const Text('Que souhaitez-vous modifier ?'),
-    //   actions: [
-    //     CupertinoActionSheetAction(
-    //       onPressed: () {
-    //         Navigator.pop(context);
-    //         // TODO: Modifier la date/heure
-    //       },
-    //       child: const Text('Date et heure'),
-    //     ),
-    //     CupertinoActionSheetAction(
-    //       onPressed: () {
-    //         Navigator.pop(context);
-    //         // TODO: Modifier le nombre de personnes
-    //       },
-    //       child: const Text('Nombre de convives'),
-    //     ),
-    //     CupertinoActionSheetAction(
-    //       onPressed: () {
-    //         Navigator.pop(context);
-    //         // TODO: Modifier les demandes spéciales
-    //       },
-    //       child: const Text('Demandes spéciales'),
-    //     ),
-    //   ],
-    //   cancelButton: CupertinoActionSheetAction(
-    //     isDefaultAction: true,
-    //     onPressed: () => Navigator.pop(context),
-    //     child: const Text('Annuler'),
-    //   ),
-    // );
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+      title: const Text('Modifier la réservation'),
+      message: const Text('Que souhaitez-vous modifier ?'),
+      actions: [
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+            // TODO: Modifier la date/heure
+          },
+          child: const Text('Date et heure'),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+            // TODO: Modifier le nombre de personnes
+          },
+          child: const Text('Nombre de convives'),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+            // TODO: Modifier les demandes spéciales
+          },
+          child: const Text('Demandes spéciales'),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Annuler'),
+      ),
+      )
+    );
   }
 }
