@@ -1,13 +1,13 @@
 const express = require('express');
+const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
+const pool = require('../config/database');
+const authenticateToken = require('../middleware/auth');
 
 // Inscription
 router.post('/signup', async (req, res) => {
   try {
-    const pool = req.app.get('pool');
     const { name, email, password, phone } = req.body;
 
     // Validation
@@ -69,7 +69,6 @@ router.post('/signup', async (req, res) => {
 // Connexion
 router.post('/login', async (req, res) => {
   try {
-    const pool = req.app.get('pool');
     const { email, password } = req.body;
 
     // Validation
@@ -120,8 +119,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Route protégée - récupérer les réservations d'un utilisateur
 router.get('/users/:userId/reservations', authenticateToken, async (req, res) => {
-  const pool = req.app.get('pool');
   const { userId } = req.params;
 
   try {

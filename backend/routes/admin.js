@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminAuth = require('../middleware/adminAuth');
-const pool = require('../server');
+const pool = require('../config/database');
 
 // Middleware admin pour toutes les routes
 router.use(adminAuth);

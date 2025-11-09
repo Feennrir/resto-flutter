@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
+const pool = require('../config/database');
+const authenticateToken = require('../middleware/auth');
 
 // Récupérer le profil de l'utilisateur connecté
 router.get('/', authenticateToken, async (req, res) => {
-  const pool = req.app.get('pool');
-
   try {
     const result = await pool.query(
       'SELECT id, name, email, phone, created_at, updated_at FROM users WHERE id = $1',
@@ -34,7 +33,6 @@ router.get('/', authenticateToken, async (req, res) => {
 
 // Mettre à jour le profil de l'utilisateur connecté
 router.put('/', authenticateToken, async (req, res) => {
-  const pool = req.app.get('pool');
   const { name, phone } = req.body;
 
   try {

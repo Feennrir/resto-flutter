@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const pool = require('../server');
+const pool = require('../config/database');
 
 const adminAuth = async (req, res, next) => {
     try {

@@ -1,36 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuration PostgreSQL
-const pool = new Pool({
-  host: process.env.DB_HOST || 'postgres',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'restaurant_db',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-});
-
-// Export du pool pour les autres modules
-module.exports = pool;
-
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Test de connexion à la base de données
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error('Erreur de connexion à la base de données:', err);
-  } else {
-    console.log('✅ Connexion à PostgreSQL réussie');
-    release();
-  }
-});
 
 // Import des routes
 const authRoutes = require('./routes/auth');

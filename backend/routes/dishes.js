@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../config/database');
+const authenticateToken = require('../middleware/auth');
 
 // Récupérer tous les plats
 router.get('/', async (req, res) => {
-  const pool = req.app.get('pool');
-
   try {
     const result = await pool.query('SELECT * FROM dishes ORDER BY category, name');
     res.json(result.rows);
@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
 
 // Récupérer un plat par ID
 router.get('/:id', async (req, res) => {
-  const pool = req.app.get('pool');
   const { id } = req.params;
 
   try {

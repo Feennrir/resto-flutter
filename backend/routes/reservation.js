@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const ReservationManager = require("../models/reservation_manager");
+const pool = require('../config/database');
+const authenticateToken = require('../middleware/auth');
+const ReservationManager = require('../models/reservation_manager');
 
+// Créer une réservation
 router.post('/', authenticateToken, async (req, res) => {
-    const pool = req.app.get('pool');
     try {
         const { userId, restaurantId, date, time, partySize, specialRequests } = req.body;
 
@@ -16,9 +17,7 @@ router.post('/', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'Le nombre de personnes doit être entre 1 et 20' });
         }
 
-        const reservationManager = new ReservationManager(pool);
-
-        const reservation = await reservationManager.createReservation(
+        const reservation = await ReservationManager.createReservation(
             userId, restaurantId, date, time, partySize, specialRequests
         );
 
@@ -30,16 +29,14 @@ router.post('/', authenticateToken, async (req, res) => {
 
 // Vérifier la disponibilité
 router.get('/availability', async (req, res) => {
-    const pool = req.app.get('pool');
     try {
         const { restaurantId, date, time, partySize } = req.query;
 
         if (!restaurantId || !date || !time || !partySize) {
             return res.status(400).json({ error: 'Paramètres manquants' });
         }
-        const reservationManager = new ReservationManager(pool);
 
-        const availability = await reservationManager.checkAvailability(
+        const availability = await ReservationManager.checkAvailability(
             restaurantId, date, time, parseInt(partySize)
         );
 
@@ -51,11 +48,9 @@ router.get('/availability', async (req, res) => {
 
 // Récupérer les réservations par date
 router.get('/:restaurantId/:date', authenticateToken, async (req, res) => {
-    const pool = req.app.get('pool');
     try {
         const { restaurantId, date } = req.params;
-        const reservationManager = new ReservationManager(pool);
-        const reservations = await reservationManager.getReservationsByDate(restaurantId, date);
+        const reservations = await ReservationManager.getReservationsByDate(restaurantId, date);
         res.json(reservations);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -64,25 +59,23 @@ router.get('/:restaurantId/:date', authenticateToken, async (req, res) => {
 
 // Annuler une réservation
 router.delete('/:reservationId', authenticateToken, async (req, res) => {
-    const pool = req.app.get('pool');
     try {
         const { reservationId } = req.params;
 
         if (!reservationId) {
             return res.status(400).json({ error: 'Paramètres manquants' });
         }
-        const reservationManager = new ReservationManager(pool);
-        const result = await reservationManager.cancelReservation(reservationId);
+
+        const result = await ReservationManager.cancelReservation(reservationId);
 
         res.json({ message: 'Réservation annulée avec succès', reservation: result });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
 });
 
+// Récupérer les créneaux disponibles
 router.get('/available-slots/:restaurantId/:date', async (req, res) => {
-    const pool = req.app.get('pool');
     try {
         const { restaurantId, date } = req.params;
 
@@ -95,8 +88,7 @@ router.get('/available-slots/:restaurantId/:date', async (req, res) => {
             return res.status(400).json({ error: 'Impossible de réserver dans le passé' });
         }
 
-        const reservationManager = new ReservationManager(pool);
-        const availableSlots = await reservationManager.getAvailableSlots(restaurantId, date);
+        const availableSlots = await ReservationManager.getAvailableSlots(restaurantId, date);
 
         return res.json({
             date,

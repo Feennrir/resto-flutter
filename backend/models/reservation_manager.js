@@ -1,10 +1,11 @@
+const pool = require('../config/database');
+
 class ReservationManager {
     constructor(db) {
         this.db = db;
     }
 
     async checkAvailability(restaurantId, date, time, partySize) {
-        // Récupérer les infos du restaurant
         const restaurant = await this.db.query(
             'SELECT max_capacity, service_duration FROM restaurant WHERE id = $1',
             [restaurantId]
@@ -15,12 +16,9 @@ class ReservationManager {
         }
 
         const { max_capacity, service_duration } = restaurant.rows[0];
-
-        // Calculer la plage horaire occupée (durée du service)
         const endTime = this.addMinutes(time, service_duration);
         const startTime = this.subtractMinutes(time, service_duration);
 
-        // Vérifier les réservations qui se chevauchent
         const overlappingReservations = await this.db.query(`
             SELECT SUM(party_size) as total_reserved
             FROM reservations 
@@ -62,14 +60,12 @@ class ReservationManager {
     }
 
     async createReservation(userId, restaurantId, date, time, partySize, specialRequests = '') {
-        // Vérifier la disponibilité
         const availability = await this.checkAvailability(restaurantId, date, time, partySize);
 
         if (!availability.available) {
             throw new Error(`Capacité insuffisante. Places disponibles: ${availability.availableSpaces}`);
         }
 
-        // Créer la réservation
         const result = await this.db.query(`
             INSERT INTO reservations (user_id, restaurant_id, reservation_date, reservation_time, party_size, special_requests)
             VALUES ($1, $2, $3, $4, $5, $6)
@@ -93,7 +89,6 @@ class ReservationManager {
     }
 
     async getAvailableSlots(restaurantId, date) {
-        // Récupérer les infos du restaurant
         const restaurant = await this.db.query(
             'SELECT opening_time, closing_time, service_duration FROM restaurant WHERE id = $1',
             [restaurantId]
@@ -104,11 +99,7 @@ class ReservationManager {
         }
 
         const { opening_time, closing_time, service_duration } = restaurant.rows[0];
-
-        // Générer les créneaux possibles (toutes les 30 minutes)
         const slots = this.generateTimeSlots(opening_time, closing_time, 30);
-
-        // Vérifier la disponibilité pour chaque créneau
         const availableSlots = [];
 
         for (const slot of slots) {
@@ -145,7 +136,6 @@ class ReservationManager {
     }
 
     async cancelReservation(reservationId) {
-        // Vérifier que la réservation appartient à l'utilisateur
         const reservationCheck = await this.db.query(
             'SELECT * FROM reservations WHERE id = $1',
             [reservationId]
@@ -155,15 +145,66 @@ class ReservationManager {
             throw new Error('Réservation non trouvée ou accès refusé');
         }
 
-        // Mettre à jour le statut de la réservation
         const result = await this.db.query(`
             UPDATE reservations 
             SET status = 'canceled' 
             WHERE id = $1 
             RETURNING *
         `, [reservationId]);
+        
         return result.rows[0];
+    }
+
+    async getPendingReservations() {
+        const query = `
+            SELECT r.*, u.name as user_name, u.email as user_email
+            FROM reservations r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.status = 'pending'
+            ORDER BY r.reservation_date ASC, r.reservation_time ASC
+        `;
+        const result = await this.db.query(query);
+        return result.rows;
+    }
+
+    async acceptReservation(reservationId) {
+        const query = `
+            UPDATE reservations
+            SET status = 'confirmed', updated_at = NOW()
+            WHERE id = $1
+            RETURNING *
+        `;
+        const result = await this.db.query(query, [reservationId]);
+        return result.rows[0];
+    }
+
+    async rejectReservation(reservationId, reason = '') {
+        const query = `
+            UPDATE reservations
+            SET status = 'rejected', rejection_reason = $2, updated_at = NOW()
+            WHERE id = $1
+            RETURNING *
+        `;
+        const result = await this.db.query(query, [reservationId, reason]);
+        return result.rows[0];
+    }
+
+    async getStats() {
+        const queries = await Promise.all([
+            this.db.query('SELECT COUNT(*) FROM reservations WHERE status = $1', ['pending']),
+            this.db.query('SELECT COUNT(*) FROM dishes'),
+            this.db.query('SELECT COUNT(*) FROM reservations WHERE status = $1', ['confirmed']),
+        ]);
+
+        return {
+            pendingReservations: parseInt(queries[0].rows[0].count),
+            totalDishes: parseInt(queries[1].rows[0].count),
+            confirmedReservations: parseInt(queries[2].rows[0].count),
+        };
     }
 }
 
-module.exports = ReservationManager;
+// Instance singleton
+const reservationManager = new ReservationManager(pool);
+
+module.exports = reservationManager;
