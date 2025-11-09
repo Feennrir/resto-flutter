@@ -15,8 +15,8 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || 'postgres',
 });
 
-// Rendre la connexion pool disponible pour les routes
-app.set('pool', pool);
+// Export du pool pour les autres modules
+module.exports = pool;
 
 // Middleware
 app.use(cors());

@@ -13,10 +13,19 @@ class AdminProfileDTO {
 
   factory AdminProfileDTO.fromJson(Map<String, dynamic> json) {
     return AdminProfileDTO(
-      pendingReservations: json['pending_reservations'],
-      todayReservations: json['today_reservations'],
-      totalDishes: json['total_dishes'],
-      availableDishes: json['available_dishes'],
+      pendingReservations: json['pendingReservations'] ?? 0,
+      todayReservations: json['todayReservations'] ?? 0,
+      totalDishes: json['totalDishes'] ?? 0,
+      availableDishes: json['availableDishes'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pendingReservations': pendingReservations,
+      'todayReservations': todayReservations,
+      'totalDishes': totalDishes,
+      'availableDishes': availableDishes,
+    };
   }
 }

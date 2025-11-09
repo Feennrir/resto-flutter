@@ -1,20 +1,41 @@
-import 'package:flutter/cupertino.dart';
-import 'package:restaurant_menu/repositories/admin_repository.dart';
-import 'package:restaurant_menu/repositories/dto/admin_profil_dto.dart';
+import 'package:flutter/foundation.dart';
+import '../repositories/admin_repository.dart';
 
 class AdminDashboardViewModel {
-  AdminRepository adminRepository = AdminRepository();
+  final AdminRepository _adminRepository = AdminRepository();
 
-  ValueNotifier<int> pendingReservations = ValueNotifier<int>(0);
-  ValueNotifier<int> todayReservations = ValueNotifier<int>(0);
-  ValueNotifier<int> totalDishes = ValueNotifier<int>(0);
-  ValueNotifier<int> availableDishes = ValueNotifier<int>(0);
+  final ValueNotifier<int> totalDishes = ValueNotifier(0);
+  final ValueNotifier<int> availableDishes = ValueNotifier(0);
+  final ValueNotifier<int> pendingReservations = ValueNotifier(0);
+  final ValueNotifier<int> todayReservations = ValueNotifier(0);
+  final ValueNotifier<bool> isLoading = ValueNotifier(false);
+  final ValueNotifier<String?> error = ValueNotifier(null);
 
-  void initialize() async{
-    AdminProfileDTO adminData = await adminRepository.getStats();
-    totalDishes.value = adminData.totalDishes;
-    availableDishes.value = adminData.availableDishes;
-    pendingReservations.value = adminData.pendingReservations;
-    todayReservations.value = adminData.todayReservations;
+  Future<void> initialize() async {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      final stats = await _adminRepository.getStats();
+
+      totalDishes.value = stats.totalDishes;
+      availableDishes.value = stats.availableDishes;
+      pendingReservations.value = stats.pendingReservations;
+      todayReservations.value = stats.todayReservations;
+    } catch (e) {
+      error.value = e.toString();
+      debugPrint('Erreur lors du chargement des stats: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void dispose() {
+    totalDishes.dispose();
+    availableDishes.dispose();
+    pendingReservations.dispose();
+    todayReservations.dispose();
+    isLoading.dispose();
+    error.dispose();
   }
 }

@@ -22,6 +22,7 @@ router.get('/reservations/pending', async (req, res) => {
         `);
         res.json(result.rows);
     } catch (error) {
+        console.error('Erreur get pending reservations:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -65,6 +66,7 @@ router.get('/reservations', async (req, res) => {
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (error) {
+        console.error('Erreur get all reservations:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -87,6 +89,7 @@ router.put('/reservations/:id/accept', async (req, res) => {
 
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Erreur accept reservation:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -109,6 +112,7 @@ router.put('/reservations/:id/reject', async (req, res) => {
 
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Erreur reject reservation:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -139,6 +143,7 @@ router.put('/reservations/:id/status', async (req, res) => {
 
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Erreur update reservation status:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -154,6 +159,7 @@ router.get('/dishes', async (req, res) => {
         `);
         res.json(result.rows);
     } catch (error) {
+        console.error('Erreur get all dishes:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -177,6 +183,7 @@ router.post('/dishes', async (req, res) => {
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        console.error('Erreur create dish:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -205,6 +212,7 @@ router.put('/dishes/:id', async (req, res) => {
 
         res.json(result.rows[0]);
     } catch (error) {
+        console.error('Erreur update dish:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -225,6 +233,7 @@ router.delete('/dishes/:id', async (req, res) => {
 
         res.json({ message: 'Plat supprimé avec succès', dish: result.rows[0] });
     } catch (error) {
+        console.error('Erreur delete dish:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -234,6 +243,8 @@ router.delete('/dishes/:id', async (req, res) => {
 // Récupérer les statistiques du restaurant
 router.get('/stats', async (req, res) => {
     try {
+        console.log('📊 Récupération des statistiques admin...');
+        
         // Réservations en attente
         const pendingReservations = await pool.query(`
             SELECT COUNT(*) as total 
@@ -259,13 +270,17 @@ router.get('/stats', async (req, res) => {
             WHERE is_available = true
         `);
 
-        res.json({
+        const stats = {
             pendingReservations: parseInt(pendingReservations.rows[0].total),
             todayReservations: parseInt(todayReservations.rows[0].total),
             totalDishes: parseInt(dishesCount.rows[0].total),
             availableDishes: parseInt(availableDishes.rows[0].total)
-        });
+        };
+
+        console.log('✅ Statistiques récupérées:', stats);
+        res.json(stats);
     } catch (error) {
+        console.error('❌ Erreur get stats:', error);
         res.status(500).json({ error: error.message });
     }
 });
