@@ -213,12 +213,16 @@ const sendNewReservationNotificationToAdmin = async (adminEmail, reservationDeta
     try {
         const transporter = createTransporter();
 
-        const { userName, userEmail, userPhone, restaurantName, date, time, partySize, specialRequests, reservationId } = reservationDetails;
+        const { userName, userEmail, userPhone, restaurantName, date, time, partySize, specialRequests, reservationId, isModification } = reservationDetails;
+
+        const isModificationText = isModification ? 'Modification de réservation' : 'Nouvelle demande de réservation';
+        const isModificationIcon = isModification ? '✏️' : '🔔';
+        const actionText = isModification ? 'Une réservation confirmée vient d\'être modifiée et nécessite une nouvelle validation.' : 'Une nouvelle demande de réservation vient d\'être effectuée et nécessite votre validation.';
 
         const mailOptions = {
             from: process.env.EMAIL_FROM || 'noreply@restaurant.com',
             to: adminEmail,
-            subject: '🔔 Nouvelle demande de réservation - ' + restaurantName,
+            subject: `${isModificationIcon} ${isModificationText} - ${restaurantName}`,
             html: `
                 <!DOCTYPE html>
                 <html>
@@ -226,25 +230,32 @@ const sendNewReservationNotificationToAdmin = async (adminEmail, reservationDeta
                     <style>
                         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
                         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                        .header { background-color: #2196F3; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .header { background-color: ${isModification ? '#FF9800' : '#2196F3'}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
                         .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
-                        .detail-box { background-color: white; padding: 20px; margin: 20px 0; border-left: 4px solid #2196F3; }
+                        .detail-box { background-color: white; padding: 20px; margin: 20px 0; border-left: 4px solid ${isModification ? '#FF9800' : '#2196F3'}; }
                         .detail-row { margin: 10px 0; }
                         .label { font-weight: bold; color: #555; }
                         .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
                         .alert-box { background-color: #fff3cd; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #ffc107; }
                         .customer-info { background-color: #e8f4f8; padding: 15px; margin: 20px 0; border-radius: 5px; }
+                        .modification-box { background-color: #fff3e0; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #FF9800; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h1>🔔 Nouvelle Demande de Réservation</h1>
+                            <h1>${isModificationIcon} ${isModificationText}</h1>
                         </div>
                         <div class="content">
                             <p><strong>Bonjour Administrateur,</strong></p>
-                            <p>Une nouvelle demande de réservation vient d'être effectuée et nécessite votre validation.</p>
+                            <p>${actionText}</p>
                             
+                            ${isModification ? `
+                            <div class="modification-box">
+                                <strong>✏️ Modification :</strong> Cette réservation était précédemment confirmée mais a été modifiée par le client. Elle nécessite une nouvelle validation.
+                            </div>
+                            ` : ''}
+
                             <div class="alert-box">
                                 <strong>⚠️ Action requise :</strong> Cette réservation est en attente de validation. Veuillez accepter ou refuser cette demande dans le panneau d'administration.
                             </div>
@@ -299,10 +310,11 @@ const sendNewReservationNotificationToAdmin = async (adminEmail, reservationDeta
                 </html>
             `,
             text: `
-Nouvelle Demande de Réservation
+${isModificationText}
 
-Une nouvelle demande de réservation vient d'être effectuée et nécessite votre validation.
+${actionText}
 
+${isModification ? '✏️ Modification : Cette réservation était précédemment confirmée mais a été modifiée par le client. Elle nécessite une nouvelle validation.\n' : ''}
 ⚠️ Action requise : Cette réservation est en attente de validation.
 
 DÉTAILS DE LA RÉSERVATION

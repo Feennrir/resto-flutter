@@ -37,7 +37,7 @@ router.put('/', authenticateToken, async (req, res) => {
 
   try {
     // Vérifier que l'utilisateur existe
-    const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [req.user.userId]);
+    const userCheck = await pool.query('SELECT id FROM users WHERE id = $1', [req.user.id]);
     
     if (userCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
@@ -46,7 +46,7 @@ router.put('/', authenticateToken, async (req, res) => {
     // Mettre à jour les informations
     const result = await pool.query(
       'UPDATE users SET name = COALESCE($1, name), phone = COALESCE($2, phone), updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING id, name, email, phone, created_at, updated_at',
-      [name || null, phone || null, req.user.userId]
+      [name || null, phone || null, req.user.id]
     );
 
     const user = result.rows[0];

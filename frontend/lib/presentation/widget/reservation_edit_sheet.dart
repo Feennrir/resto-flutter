@@ -4,14 +4,14 @@ import 'package:restaurant_menu/repositories/dto/reservation_profile_dto.dart';
 import 'package:restaurant_menu/utils/colors.dart' as app_colors;
 import 'package:restaurant_menu/viewmodels/profile_viewmodel.dart';
 
+import '../../viewmodels/reservation_edit_viewmodel.dart';
+
 class ReservationEditSheet extends StatefulWidget {
   final ReservationProfileDto reservation;
-  final ProfileViewModel profileViewModel;
   final VoidCallback onSuccess;
 
   const ReservationEditSheet({
     required this.reservation,
-    required this.profileViewModel,
     required this.onSuccess,
   });
 
@@ -20,6 +20,8 @@ class ReservationEditSheet extends StatefulWidget {
 }
 
 class _ReservationEditSheetState extends State<ReservationEditSheet> {
+  final ReservationEditSheetModel profileViewModel = ReservationEditSheetModel();
+
   bool isEditing = false;
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
@@ -71,7 +73,7 @@ class _ReservationEditSheetState extends State<ReservationEditSheet> {
       child: SafeArea(
         top: false,
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Ajout de cette ligne
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Handle bar
             Container(
@@ -115,16 +117,14 @@ class _ReservationEditSheetState extends State<ReservationEditSheet> {
               ),
             ),
 
-            // Contenu principal - MODIFIÉ
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
-                physics: const AlwaysScrollableScrollPhysics(), // Ajout pour forcer le scroll
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: isEditing ? _buildEditContent() : _buildDisplayContent(),
               ),
             ),
 
-            // Boutons d'action
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -369,8 +369,34 @@ class _ReservationEditSheetState extends State<ReservationEditSheet> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             color: CupertinoColors.systemRed,
             borderRadius: BorderRadius.circular(12),
-            onPressed: () {
-              // Logique d'annulation
+            onPressed: () async{
+              final bool? confirm = await showCupertinoDialog<bool>(
+                context: context,
+                builder: (BuildContext dialogContext) => CupertinoAlertDialog(
+                  title: const Text('Confirmer l\'annulation'),
+                  content: const Text('Êtes-vous sûr de vouloir annuler cette réservation ?'),
+                  actions: [
+                    CupertinoDialogAction(
+                      child: const Text('Non'),
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                    ),
+                    CupertinoDialogAction(
+                      isDestructiveAction: true,
+                      child: const Text('Oui, annuler'),
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                    ),
+                  ],
+                ),
+              );
+
+              // Si l'utilisateur a confirmé, procéder à l'annulation
+              if (confirm == true) {
+                await profileViewModel.cancelReservation(widget.reservation).then((_) {
+                  if (mounted) {
+                    Navigator.pop(context);
+                  }
+                });
+              }
             },
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -438,7 +464,7 @@ class _ReservationEditSheetState extends State<ReservationEditSheet> {
         const SizedBox(width: 12),
         Expanded(
           child: ValueListenableBuilder<bool>(
-            valueListenable: widget.profileViewModel.isLoadingNotifier,
+            valueListenable: profileViewModel.isLoading,
             builder: (context, isLoading, _) {
               return CupertinoButton.filled(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -462,18 +488,16 @@ class _ReservationEditSheetState extends State<ReservationEditSheet> {
   }
 
   Future<void> _saveChanges() async {
-    final success = await widget.profileViewModel.updateReservation(
-      id: widget.reservation.id,
+    await profileViewModel.updateReservation(
+      oldReservation: widget.reservation,
       date: selectedDate,
       time: selectedTime,
       guests: selectedGuests,
       specialRequests: specialRequestsController.text.trim(),
     );
-
-    if (success && mounted) {
+      setState(() {
+      });
       Navigator.pop(context);
-      widget.onSuccess();
-    }
   }
 
   Widget _buildDetailRow(IconData icon, String title, String value) {

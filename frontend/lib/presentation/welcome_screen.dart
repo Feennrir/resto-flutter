@@ -1,190 +1,144 @@
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_menu/presentation/screen/login_screen.dart';
-import 'package:restaurant_menu/presentation/screen/signup_screen.dart';
-import 'screen/menu_screen.dart';
+import 'package:restaurant_menu/utils/colors.dart' as app_colors;
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
-}
-
-class _WelcomeScreenState extends State<WelcomeScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.systemBackground,
-      child: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(),
-                  Hero(
-                    tag: 'app_logo',
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: CupertinoColors.systemOrange,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: CupertinoColors.systemOrange.withOpacity(0.3),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        CupertinoIcons.square_list,
-                        size: 60,
-                        color: CupertinoColors.white,
-                      ),
-                    ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icône
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: app_colors.Colors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                CupertinoIcons.person_crop_circle,
+                size: 60,
+                color: app_colors.Colors.primary,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                // Titre
+                const Text(
+                  'Connectez-vous',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 40),
-                  // Titre
-                  const Text(
-                    'Menu Restaurant',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: CupertinoColors.label,
-                    ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+
+                // Description
+                const Text(
+                  'Accédez à votre profil et gérez vos réservations en vous connectant à votre compte.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: CupertinoColors.secondaryLabel,
+                    height: 1.5,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Découvrez nos délicieux plats',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: CupertinoColors.secondaryLabel,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Bouton Connexion
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: CupertinoButton(
-                      color: CupertinoColors.systemOrange,
-                      borderRadius: BorderRadius.circular(16),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Se connecter',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: CupertinoColors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Bouton Inscription
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: CupertinoButton(
-                      color: CupertinoColors.systemBackground,
-                      borderRadius: BorderRadius.circular(16),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => const SignupScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Créer un compte',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: CupertinoColors.systemOrange,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  CupertinoButton(
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(height: 40),
+
+                // Bouton de connexion
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: CupertinoButton(
+                    color: app_colors.Colors.primary,
+                    borderRadius: BorderRadius.circular(16),
                     onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
+                      Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (context) => const MenuScreen(),
+                          builder: (context) => const LoginScreen(),
                         ),
-                        (route) => false,
                       );
                     },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Icon(CupertinoIcons.lock_open,
+                            size: 20, color: CupertinoColors.white),
+                        SizedBox(width: 8),
                         Text(
-                          'Continuer sans compte',
+                          'Se connecter',
                           style: TextStyle(
-                            fontSize: 16,
-                            color: CupertinoColors.secondaryLabel,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: CupertinoColors.white,
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          CupertinoIcons.arrow_right,
-                          size: 16,
-                          color: CupertinoColors.secondaryLabel,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+
+                // Avantages
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.systemGrey6,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildBenefitRow(
+                        CupertinoIcons.calendar_badge_plus,
+                        'Réserver une table facilement',
+                      ),
+                      const SizedBox(height: 12),
+                      _buildBenefitRow(
+                        CupertinoIcons.clock,
+                        'Consulter l\'historique de vos réservations',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBenefitRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: app_colors.Colors.primary,
+          size: 20,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
