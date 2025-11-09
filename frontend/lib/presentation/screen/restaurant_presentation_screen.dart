@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:restaurant_menu/viewmodels/restaurant_presentation_viewmodel.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'menu_screen.dart';
 import '../../utils/colors.dart' as app_colors;
 
@@ -108,6 +109,67 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
     );
   }
 
+  Future<void> _openInAppleMaps() async {
+    final restaurantInfo = viewModel.restaurantInfo.value;
+
+    // Utiliser les coordonnées de la base de données ou les coordonnées par défaut
+    final LatLng location = restaurantInfo?.latitude != null && restaurantInfo?.longitude != null
+        ? LatLng(restaurantInfo!.latitude!, restaurantInfo.longitude!)
+        : defaultLocation;
+
+    final String address = restaurantInfo?.address ?? '15 Rue de la Gastronomie, 75001 Paris, France';
+    final String restaurantName = restaurantInfo?.name ?? 'Le Gourmet';
+
+    // URL pour Apple Maps avec coordonnées et nom du restaurant
+    final Uri appleMapsUrl = Uri.parse(
+        'https://maps.apple.com/?ll=${location.latitude},${location.longitude}&q=${Uri.encodeComponent(restaurantName)}&address=${Uri.encodeComponent(address)}'
+    );
+
+    try {
+      if (await canLaunchUrl(appleMapsUrl)) {
+        await launchUrl(appleMapsUrl, mode: LaunchMode.externalApplication);
+      } else {
+        // Fallback vers Google Maps si Apple Maps n'est pas disponible
+        final Uri googleMapsUrl = Uri.parse(
+            'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}'
+        );
+
+        if (await canLaunchUrl(googleMapsUrl)) {
+          await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+        } else {
+          if (mounted) {
+            _showErrorDialog('Impossible d\'ouvrir l\'application de cartes');
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog('Erreur lors de l\'ouverture de la carte : $e');
+      }
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('Erreur'),
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildHeroSection() {
     final restaurantInfo = viewModel.restaurantInfo.value;
     return Container(
@@ -193,22 +255,24 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
               CupertinoIcons.time,
               'Horaires',
               restaurantInfo.formattedHours,
+              false
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
               CupertinoIcons.person_2_fill,
               'Capacité',
               '${restaurantInfo.maxCapacity} places',
+              false
             ),
             const SizedBox(height: 12),
             if (restaurantInfo.phone != null) ...[
-              _buildInfoRow(CupertinoIcons.phone, 'Réservations', restaurantInfo.phone!),
+              _buildInfoRow(CupertinoIcons.phone, 'Réservations', restaurantInfo.phone!, true),
               const SizedBox(height: 12),
             ],
           ] else ...[
-            _buildInfoRow(CupertinoIcons.time, 'Horaires', 'Mar-Dim : 12h-14h / 19h-22h'),
+            _buildInfoRow(CupertinoIcons.time, 'Horaires', 'Mar-Dim : 12h-14h / 19h-22h', false),
             const SizedBox(height: 12),
-            _buildInfoRow(CupertinoIcons.phone, 'Réservations', '+33 1 42 86 87 88'),
+            _buildInfoRow(CupertinoIcons.phone, 'Réservations', '+33 1 42 86 87 88', true),
             const SizedBox(height: 12),
           ],
         ],
@@ -216,7 +280,7 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String title, String value) {
+  Widget _buildInfoRow(IconData icon, String title, String value, bool isPhoneNumber) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -238,10 +302,23 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
                   color: CupertinoColors.black,
                 ),
               ),
-              Text(
+              const SizedBox(height: 4),
+              isPhoneNumber
+                  ? GestureDetector(
+                onTap: () => _makePhoneCall(value),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: app_colors.Colors.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              )
+                  : Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: CupertinoColors.systemGrey,
                 ),
               ),
@@ -250,6 +327,26 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
         ),
       ],
     );
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    // Nettoyer le numéro de téléphone (enlever espaces, tirets, etc.)
+    final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+    final Uri phoneUri = Uri.parse('tel:$cleanNumber');
+
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        if (mounted) {
+          _showErrorDialog('Impossible d\'ouvrir l\'application téléphone');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog('Erreur lors de l\'appel : $e');
+      }
+    }
   }
 
   Widget _buildLocationInfo() {
@@ -295,61 +392,99 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
             ),
           ),
           const SizedBox(height: 16),
-          // Carte interactive
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: CupertinoColors.systemGrey4,
-                width: 1,
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: FlutterMap(
-                options: MapOptions(
-                  initialCenter: restaurantLocation,
-                  initialZoom: 16.0,
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-                  ),
+          // Carte interactive avec geste de tap
+          GestureDetector(
+            onTap: _openInAppleMaps,
+            child: Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: CupertinoColors.systemGrey4,
+                  width: 1,
                 ),
+              ),
+              child: Stack(
                 children: [
-                  TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.example.restaurant_menu',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: restaurantLocation,
-                        width: 40,
-                        height: 40,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: app_colors.Colors.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: CupertinoColors.white,
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: CupertinoColors.black.withOpacity(0.3),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            CupertinoIcons.location_solid,
-                            color: CupertinoColors.white,
-                            size: 20,
-                          ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: FlutterMap(
+                      options: MapOptions(
+                        initialCenter: restaurantLocation,
+                        initialZoom: 16.0,
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.none, // Désactiver les interactions pour permettre le tap
                         ),
                       ),
-                    ],
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'com.example.restaurant_menu',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: restaurantLocation,
+                              width: 40,
+                              height: 40,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: app_colors.Colors.primary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: CupertinoColors.white,
+                                    width: 3,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: CupertinoColors.black.withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  CupertinoIcons.location_solid,
+                                  color: CupertinoColors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Overlay pour indiquer que la carte est cliquable
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            CupertinoIcons.map,
+                            color: CupertinoColors.white,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Ouvrir dans Plans',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -362,6 +497,31 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
               fontSize: 14,
               color: CupertinoColors.systemGrey2,
             ),
+          ),
+          const SizedBox(height: 12),
+          // Bouton alternatif pour ouvrir la carte
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  CupertinoIcons.location_circle,
+                  color: app_colors.Colors.primary,
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Obtenir l\'itinéraire',
+                  style: TextStyle(
+                    color: app_colors.Colors.primary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            onPressed: _openInAppleMaps,
           ),
         ],
       ),
