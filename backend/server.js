@@ -15,6 +15,7 @@ const profileRoutes = require('./routes/profile');
 const dishesRoutes = require('./routes/dishes');
 const reservationsRoutes = require('./routes/reservation');
 const adminRoutes = require('./routes/admin');
+const restaurantRoutes = require('./routes/restaurant');
 
 // Routes API
 app.use('/api/auth', authRoutes);
@@ -22,6 +23,7 @@ app.use('/api/auth/profile', profileRoutes);
 app.use('/api/dishes', dishesRoutes);
 app.use('/api/reservations', reservationsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/restaurant', restaurantRoutes);
 
 // Route de santé
 app.get('/health', (req, res) => {

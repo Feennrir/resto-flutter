@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS restaurant (
     opening_time TIME NOT NULL DEFAULT '10:00:00',
     closing_time TIME NOT NULL DEFAULT '22:00:00',
     service_duration INTEGER NOT NULL DEFAULT 120, -- durée en minutes
+    phone VARCHAR(20),
+    address TEXT,
+    description TEXT,
+    image_url TEXT,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -44,8 +50,20 @@ CREATE TABLE IF NOT EXISTS reservations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO restaurant (name, max_capacity, opening_time, closing_time, service_duration) VALUES
-    ('Le Petit Bistrot', 40, '11:00:00', '13:30:00', 120);
+INSERT INTO restaurant (name, max_capacity, opening_time, closing_time, service_duration, phone, address, description, image_url, latitude, longitude) VALUES
+    (
+        'Le Petit Bistrot', 
+        40, 
+        '11:00:00', 
+        '13:30:00', 
+        120,
+        '+33 1 42 86 87 88',
+        '61 Rue Mercière, 69002 Lyon, France',
+        'Depuis 1985, Le Petit Bistrot vous accueille dans un cadre élégant et chaleureux. Notre chef, formé dans les plus grandes maisons françaises, vous propose une cuisine raffinée mêlant tradition et modernité.',
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
+        45.761788,
+        4.833056
+    );
 
 -- Insérer un utilisateur admin par défaut
 -- Mot de passe: Admin123! (hashé avec bcrypt)
