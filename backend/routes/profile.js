@@ -8,7 +8,7 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, name, email, phone, created_at, updated_at FROM users WHERE id = $1',
-      [req.user.userId]
+      [req.user.id]
     );
 
     if (result.rows.length === 0) {
