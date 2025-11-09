@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS reservations (
 );
 
 INSERT INTO restaurant (name, max_capacity, opening_time, closing_time, service_duration) VALUES
-    ('Le Petit Bistrot', 40, '11:00:00', '23:00:00', 120);
+    ('Le Petit Bistrot', 40, '11:00:00', '13:30:00', 120);
 
 -- Insérer un utilisateur admin par défaut
 -- Mot de passe: Admin123! (hashé avec bcrypt)

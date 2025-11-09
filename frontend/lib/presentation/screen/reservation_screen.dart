@@ -228,24 +228,43 @@ class _ReservationScreenState extends State<ReservationScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 12),
-        ValueListenableBuilder<List<String>>(
+        const SizedBox(height: 16),
+        ValueListenableBuilder<List<Map<String, dynamic>>>(
           valueListenable: viewModel.availableTimes,
           builder: (context, availableTimes, child) {
             if (availableTimes.isEmpty) {
               return Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
                   color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Aucun horaire disponible pour cette date',
-                    style: TextStyle(
-                      color: CupertinoColors.systemGrey,
-                      fontSize: 16,
-                    ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        CupertinoIcons.calendar_badge_minus,
+                        size: 48,
+                        color: CupertinoColors.systemGrey.withOpacity(0.6),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Aucun horaire disponible',
+                        style: TextStyle(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Veuillez sélectionner une autre date',
+                        style: TextStyle(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -259,14 +278,28 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
-                    childAspectRatio: 2.5,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.3,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
                   ),
                   itemCount: availableTimes.length,
                   itemBuilder: (context, index) {
-                    final time = availableTimes[index];
+                    final slot = availableTimes[index];
+                    final time = slot['time'] as String;
+                    final availableSpaces = slot['availableSpaces'] as int;
+                    final maxCapacity = slot['maxCapacity'] as int;
                     final isSelected = selectedTime == time;
+                    final occupancyRate = availableSpaces / maxCapacity;
+                    
+                    // Déterminer la couleur selon la disponibilité
+                    Color statusColor;
+                    if (occupancyRate > 0.5) {
+                      statusColor = CupertinoColors.activeGreen;
+                    } else if (occupancyRate > 0.25) {
+                      statusColor = CupertinoColors.systemOrange;
+                    } else {
+                      statusColor = CupertinoColors.systemRed;
+                    }
 
                     return CupertinoButton(
                       padding: EdgeInsets.zero,
@@ -275,20 +308,106 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.primary
-                              : CupertinoColors.systemGrey6,
-                          borderRadius: BorderRadius.circular(8),
+                          gradient: isSelected
+                              ? LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.primary,
+                                    Colors.primary.withOpacity(0.8),
+                                  ],
+                                )
+                              : null,
+                          color: isSelected ? null : CupertinoColors.systemGrey5,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.primary
+                                : CupertinoColors.systemGrey4,
+                            width: isSelected ? 2 : 1,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.primary.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: CupertinoColors.systemGrey.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ],
                         ),
-                        child: Center(
-                          child: Text(
-                            time,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? CupertinoColors.white
-                                  : CupertinoColors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.clock,
+                                    size: 16,
+                                    color: isSelected
+                                        ? CupertinoColors.white
+                                        : CupertinoColors.systemGrey,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    time,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? CupertinoColors.white
+                                          : CupertinoColors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? CupertinoColors.white.withOpacity(0.2)
+                                      : statusColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.person_2_fill,
+                                      size: 12,
+                                      color: isSelected
+                                          ? CupertinoColors.white
+                                          : statusColor,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '$availableSpaces/$maxCapacity',
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? CupertinoColors.white
+                                            : statusColor,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

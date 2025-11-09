@@ -17,7 +17,7 @@ class ReservationScreenViewModel {
   late final ValueNotifier<DateTime> minimumDate = ValueNotifier<DateTime>(_initialDate);
   final ValueNotifier<String?> selectedTime = ValueNotifier<String?>(null);
   final ValueNotifier<int> numberOfGuests = ValueNotifier<int>(2);
-  final ValueNotifier<List<String>> availableTimes = ValueNotifier<List<String>>([]);
+  final ValueNotifier<List<Map<String, dynamic>>> availableTimes = ValueNotifier<List<Map<String, dynamic>>>([]);
   final ValueNotifier<String> specialRequests = ValueNotifier<String>('');
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
@@ -59,7 +59,8 @@ class ReservationScreenViewModel {
         date: selectedDate.value.toIso8601String().split('T')[0],
       );
       availableTimes.value = timeSlots;
-      if (selectedTime.value != null && !timeSlots.contains(selectedTime.value)) {
+      if (selectedTime.value != null && 
+          !timeSlots.any((slot) => slot['time'] == selectedTime.value)) {
         selectedTime.value = null;
       }
     } catch (e) {

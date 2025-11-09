@@ -25,18 +25,10 @@ Voir le Kanban sur le repo GitHub : ![Kanban Board](screenshots/board_overview.p
 
 ## 🔑 Identifiants de Test
 
-### Utilisateur - Client
-```
-Email : john.doe@example.com
-Mot de passe : test123456
-```
-
----
-
 ### Administrateur - Back-office
 ```
 Email : admin@restaurant.com
-Mot de passe : admin123456
+Mot de passe : admin
 ```
 
 ---
@@ -67,7 +59,6 @@ Mot de passe : admin123456
 ---
 
 ### User Stories - Sprint 1 
-![Sprint 1](screenshots/sprint_1_user_stories.png)
 
 **User Stories incluses :**
 - US-001 : En tant qu'utilisateur, je veux créer un compte ou me connecter pour réserver une table ou consulter mes réservations
@@ -77,10 +68,8 @@ Mot de passe : admin123456
 - US-005 : En tant qu'utilisateur, je veux réserver une table en choisissant date et heure
 - US-006 : En tant qu'utilisateur, je veux voir le nombre de places disponibles
 
----
 
 ### User Stories - Sprint 2
-![Sprint 2](screenshots/sprint_2_user_stories.png)
 
 **User Stories incluses :**
 - US-007 : En tant qu'utilisateur, je veux modifier mes réservations existantes
@@ -89,3 +78,7 @@ Mot de passe : admin123456
 - US-010 : En tant qu'utilisateur et admin, je veux recevoir une confirmation par email après une réservation
 - US-011 : En tant qu'utilisateur, je veux localiser le restaurant via une carte interactive
 - US-012 : En tant qu'administrateur, je veux accéder à un back-office pour gérer les réservations et le menu
+
+### Board final après Sprint 2
+![Board Final](screenshots/board_final.png)
+**Description :** Vue finale du board Trello/Notion après la complétion des deux sprints.

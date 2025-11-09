@@ -126,7 +126,8 @@ class ReservationManager {
         const openTimeMinutes = openHour * 60 + openMin;
         const closeTimeMinutes = closeHour * 60 + closeMin;
 
-        for (let time = openTimeMinutes; time < closeTimeMinutes - 60; time += intervalMinutes) {
+        // Générer tous les créneaux jusqu'à l'heure de fermeture (non incluse)
+        for (let time = openTimeMinutes; time < closeTimeMinutes; time += intervalMinutes) {
             const hour = Math.floor(time / 60);
             const minute = time % 60;
             slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);

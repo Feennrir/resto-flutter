@@ -19,17 +19,17 @@ L'application offre une expérience utilisateur fluide avec un design iOS natif 
 
 ### 🎯 Fonctionnalités avancées
 
-- ❌ **Stockage en base de données** : Toutes les réservations sont enregistrées en PostgreSQL
-- ❌ **Vérification de disponibilité** : Affichage du nombre de places restantes par créneau horaire (ex: 14h = 7 places)
+- ✅ **Stockage en base de données** : Toutes les réservations sont enregistrées en PostgreSQL
+- ✅ **Vérification de disponibilité** : Affichage du nombre de places restantes par créneau horaire (ex: 14h = 7 places)
 - ❌ **Modification de réservation** : Interface permettant à l'utilisateur de modifier ses réservations existantes
-- ❌ **Suppression de réservation** : Possibilité d'annuler une réservation via l'application
-- ❌ **Back-office hôte** : Écran d'administration pour valider ou refuser les demandes de réservation
+- ✅ **Suppression de réservation** : Possibilité d'annuler une réservation via l'application
+- ✅ **Back-office hôte** : Écran d'administration pour valider ou refuser les demandes de réservation
 
 ### 🌟 Fonctionnalités bonus
 
 - ❌ **Gestion intelligente des tables** : Attribution automatique des tables selon le nombre de personnes (1 personne = table de 2)
-- ❌ **Notifications email** : Email de confirmation automatique pour l'utilisateur et l'hôte
-- ✅ **Intégration Google Maps** : Carte interactive pour localiser le restaurant
+- ✅ **Notifications email** : Email de confirmation automatique pour l'utilisateur et l'hôte
+- ✅ **Intégration Carte** : Carte interactive pour localiser le restaurant
 
 ## 🛠️ Stack Technique
 
@@ -61,9 +61,6 @@ cd resto-flutter
 ```bash
 cd backend
 
-# Installer les dépendances Node.js
-npm install
-
 # Démarrer les conteneurs Docker (PostgreSQL + API)
 docker-compose up -d
 
@@ -94,9 +91,6 @@ static const String baseUrl = 'http://localhost:3000/api';
 
 // Pour Android Emulator
 static const String baseUrl = 'http://10.0.2.2:3000/api';
-
-// Pour device physique (remplacez par votre IP locale)
-static const String baseUrl = 'http://192.168.1.X:3000/api';
 ```
 
 ### 5. Lancer l'application

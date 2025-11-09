@@ -62,9 +62,6 @@ class ReservationRepository {
         'partySize': partySize.toString(),
       };
 
-      final uri = Uri.parse('${ApiService.baseUrl}/api/reservations/availability')
-          .replace(queryParameters: queryParams);
-
       final response = await _apiService.get('/api/reservations/availability?' +
           queryParams.entries.map((e) => '${e.key}=${e.value}').join('&'));
 
@@ -99,7 +96,7 @@ class ReservationRepository {
     }
   }
 
-  Future<List<String>> getAvailableTimeSlots({
+  Future<List<Map<String, dynamic>>> getAvailableTimeSlots({
     required String restaurantId,
     required String date,
   }) async {
@@ -111,8 +108,12 @@ class ReservationRepository {
         final List<dynamic> availableSlots = responseBody['availableSlots'] as List;
 
         return availableSlots
-            .map((slot) => slot['time'] as String)
-            .where((time) => time.isNotEmpty)
+            .map((slot) => {
+              'time': slot['time'] as String,
+              'availableSpaces': slot['availableSpaces'] as int,
+              'maxCapacity': slot['maxCapacity'] as int,
+            })
+            .where((slot) => (slot['time'] as String).isNotEmpty)
             .toList();
       } else {
         final errorData = jsonDecode(response.body);
