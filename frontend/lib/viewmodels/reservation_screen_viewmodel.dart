@@ -26,7 +26,6 @@ class ReservationScreenViewModel {
     minimumDate.dispose();
     selectedTime.dispose();
     numberOfGuests.dispose();
-    availableTimes.dispose();
     specialRequests.dispose();
     isLoading.dispose();
   }
