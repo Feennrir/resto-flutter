@@ -490,14 +490,6 @@ class _RestaurantPresentationScreenState extends State<RestaurantPresentationScr
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Métro : Châtelet-Les Halles (Lignes 1, 4, 7, 11, 14)\nParking : Parking Samaritaine (5 min à pied)',
-            style: TextStyle(
-              fontSize: 14,
-              color: CupertinoColors.systemGrey2,
-            ),
-          ),
           const SizedBox(height: 12),
           // Bouton alternatif pour ouvrir la carte
           CupertinoButton(

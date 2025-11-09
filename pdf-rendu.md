@@ -35,6 +35,7 @@ Voir le Kanban sur le repo GitHub :
   - Page profil utilisateur
   - back-office pour gérer les réservations
   - Click sur la map amene sur le gps du tel avec l'adresse prérempli
+  - Modifier mes réservations existantes
 
 - Nathan Boileau :
   - Endpoint création reservation
@@ -90,6 +91,16 @@ Mot de passe : admin
 ### 6. Profile User
 ![Profile User](screenshots/profile_page.png)
 **Description :** Écran de profil utilisateur affichant les informations personnelles et les réservations effectuées.
+
+---
+### 7. Profile User Edit
+![Profile User Edit](screenshots/profile_edit_user.png)
+**Description :** Écran de modification des informations personnelles de l'utilisateur.
+
+---
+### 8. Profile edit Reservation
+![Profile edit Reservation](screenshots/profile_edit_reservation.png)
+**Description :** Écran de modification des réservations existantes par l'utilisateur.
 
 
 ## 📊 Board de Gestion de Projet
