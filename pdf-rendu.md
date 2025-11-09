@@ -2,7 +2,7 @@
 
 **Projet** : Application mobile de réservation de tables de restaurant  
 **Cours** : Programmation avec Flutter - ESGI  
-**Date de rendu** : Vendredi 07 Novembre 2025
+**Date de rendu** : Dimanche 09 Novembre 2025
 
 ---
 
@@ -19,7 +19,34 @@
 
 ## 🎯 Répartition des Tâches
 
-Voir le Kanban sur le repo GitHub : ![Kanban Board](screenshots/board_overview.png)
+Voir le Kanban sur le repo GitHub : 
+![Kanban Board](screenshots/board_overview1.png)
+![Kanban Board](screenshots/board_overview2.png)
+![Kanban Board](screenshots/board_overview3.png)
+
+
+- Maxence Lanone :
+  - Reservation table avec choix date/heure
+  - Ecran d'accueil
+  - Page visualisation des menus
+  - Valider ou refuser les demandes de réservation
+  - localiser le restaurant via une carte interactive
+  - Endpoint menu get all (avec param entrée plat desserts)
+  - Page profil utilisateur
+  - back-office pour gérer les réservations
+  - Click sur la map amene sur le gps du tel avec l'adresse prérempli
+
+- Nathan Boileau :
+  - Endpoint création reservation
+  - Voir le nombre de places disponibles avant reservation
+  - Endpoint connexion / inscription
+  - Ecran de connexion/inscription
+  - Page reservation
+  - Menu par categorie
+  - Endpoint reservation getAll
+  - Annuler une réservation
+  - Confirmation par email après reservation
+  - Relier API et Profil
 
 ---
 
@@ -40,21 +67,37 @@ Mot de passe : admin
 **Description :** Écran affichant le menu complet du restaurant avec différentes catégories (Burgers, Pizzas, Salades, Desserts, Boissons). Sous-catégories accessibles via des onglets.
 
 ---
-### 2. Profile Utilisateur
-![Profile Utilisateur](screenshots/profile_utilisateur.png)
-**Description :** Écran de profil utilisateur affichant les informations personnelles et les réservations.
+### 2. Restaurant Main Screen
+![Restaurant Main Screen](screenshots/restaurant_page.png)
+**Description :** Écran principal du restaurant
 
 ---
+### 3. Reservation Table
+![Reservation Table](screenshots/reservation_page.png)
+**Description :** Écran de réservation de table avec sélection de la date, de l'heure et du nombre de personnes.
 
-# AJOUTER DES CAPTURES D'ÉCRAN SUPPLÉMENTAIRES SELON LES FONCTIONNALITÉS IMPLÉMENTÉES
+---
+### 4. Admin Back-office
+![Admin Back-office](screenshots/admin_page.png)
+**Description :** Écran d'administration avec divers actions.
+
+---
+### 5. Admin validation Reservation
+![Admin validation Reservation](screenshots/validate_reservation.png)
+**Description :** Écran d'administration pour valider ou refuser les demandes de réservation.
+
+---
+### 6. Profile User
+![Profile User](screenshots/profile_page.png)
+**Description :** Écran de profil utilisateur affichant les informations personnelles et les réservations effectuées.
 
 
-## 📊 Board de Gestion de Projet (Trello/Notion)
+## 📊 Board de Gestion de Projet
 
 ### Vue d'ensemble du Board
 ![Board Overview](screenshots/board_overview.png)
 
-**Description :** Vue globale du board Trello/Notion avec toutes les colonnes de workflow (Backlog, To Do, In Progress, Review, Done).
+**Description :** Vue globale du board avec toutes les colonnes de workflow.
 
 ---
 
@@ -72,7 +115,7 @@ Mot de passe : admin
 ### User Stories - Sprint 2
 
 **User Stories incluses :**
-- ✅ US-007 : En tant qu'utilisateur, je veux modifier mes réservations existantes
+- ❌ US-007 : En tant qu'utilisateur, je veux modifier mes réservations existantes
 - ✅ US-008 : En tant qu'utilisateur, je veux annuler une réservation via l'application
 - ✅ US-009 : En tant qu'administrateur, je veux valider ou refuser les demandes de réservation
 - ✅ US-010 : En tant qu'utilisateur et admin, je veux recevoir une confirmation par email après une réservation
@@ -87,7 +130,3 @@ Mot de passe : admin
 - ✅ US-015 : En tant qu'administrateur, je veux recevoir une notification email à chaque nouvelle réservation
 - ✅ US-016 : En tant qu'utilisateur, je veux recevoir un email de confirmation/refus de ma réservation
 - ✅ US-017 : En tant qu'utilisateur, je veux profiter d'une interface native iOS (Cupertino)
-
-### Board final après Sprint 2
-![Board Final](screenshots/board_final.png)
-**Description :** Vue finale du board Trello/Notion après la complétion des deux sprints.

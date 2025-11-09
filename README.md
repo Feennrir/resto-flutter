@@ -252,9 +252,6 @@ curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"test123"}'
 
-# Vérifier disponibilité (sans auth)
-curl "http://localhost:3000/api/reservation/availability?restaurantId=1&date=2025-11-15&time=19:00&partySize=2"
-
 # Créer une réservation (avec token)
 curl -X POST http://localhost:3000/api/reservation \
   -H "Content-Type: application/json" \

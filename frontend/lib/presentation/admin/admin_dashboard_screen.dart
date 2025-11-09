@@ -218,9 +218,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           'Gérer le menu',
           'Ajoutez, modifiez ou supprimez des plats',
           CupertinoIcons.square_list,
-          () {
-            // Navigation vers gestion menu
-          },
+          null,
         ),
         const SizedBox(height: 12),
         _buildManagementCard(
@@ -228,9 +226,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           'Paramètres',
           'Configurez les paramètres du restaurant',
           CupertinoIcons.settings,
-          () {
-            // Navigation vers paramètres
-          },
+          null,
         ),
       ],
     );
@@ -241,56 +237,61 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     String title,
     String subtitle,
     IconData icon,
-    VoidCallback onTap,
+    VoidCallback? onTap,
   ) {
+    final bool isEnabled = onTap != null;
+    
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: CupertinoColors.systemGrey4, width: 1),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+      onTap: isEnabled ? onTap : null,
+      child: Opacity(
+        opacity: isEnabled ? 1.0 : 0.5,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemBackground,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: CupertinoColors.systemGrey4, width: 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: Colors.primary, size: 24),
               ),
-              child: Icon(icon, color: Colors.primary, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: CupertinoColors.systemGrey,
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: CupertinoColors.systemGrey,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Icon(
-              CupertinoIcons.chevron_right,
-              color: CupertinoColors.systemGrey3,
-              size: 20,
-            ),
-          ],
+              const Icon(
+                CupertinoIcons.chevron_right,
+                color: CupertinoColors.systemGrey3,
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
