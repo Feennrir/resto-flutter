@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/src/material/time.dart';
 import 'package:restaurant_menu/models/reservation.dart';
+import 'package:restaurant_menu/repositories/dto/reservation_profile_dto.dart';
 import 'package:restaurant_menu/services/api_service.dart';
 
 import 'auth_repository.dart';
@@ -139,6 +141,31 @@ class ReservationRepository {
       } else {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData['error'] ?? 'Erreur lors de l\'annulation de la réservation');
+      }
+    } catch (e) {
+      throw Exception('Erreur de connexion: $e');
+    }
+  }
+
+  Future<bool> updateReservation({required ReservationProfileDto reservation}) async {
+    try {
+      final token = await _authRepository.getToken();
+      final Map<String, dynamic> requestBody = {
+        'date': reservation.date,
+        'time': reservation.time,
+        'guests': reservation.guests,
+        'specialRequests': reservation.specialRequests,
+      };
+
+      final response = await _apiService.put(
+        '/reservations/${reservation.id}', requestBody, token: token
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['error'] ?? 'Erreur lors de la mise à jour de la réservation');
       }
     } catch (e) {
       throw Exception('Erreur de connexion: $e');

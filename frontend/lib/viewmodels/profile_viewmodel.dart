@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/src/material/time.dart';
 import 'package:restaurant_menu/models/reservation.dart';
 import 'package:restaurant_menu/repositories/reservation_repository.dart';
 import '../models/user.dart';
@@ -76,6 +77,7 @@ class ProfileViewModel {
     userNotifier.dispose();
     isLoadingNotifier.dispose();
     errorMessageNotifier.dispose();
+    reservations.dispose();
   }
 
   void cancelReservation(int id) async {
@@ -89,10 +91,31 @@ class ProfileViewModel {
         time: updatedReservations.time,
         status: 'Cancelled',
         guests: updatedReservations.guests,
+        specialRequests: updatedReservations.specialRequests,
         isUpcoming: updatedReservations.isUpcoming,
       );
       int index = reservations.value.indexOf(updatedReservations);
       reservations.value[index] = cancelledReservation;
     }
+  }
+
+  Future updateReservation({required int id, DateTime? date, TimeOfDay? time, String? specialRequests, int guests = 0}) async {
+    ReservationProfileDto updatedReservations = reservations.value.firstWhere((res) => res.id == id);
+    ReservationProfileDto newReservation = ReservationProfileDto(
+      id: updatedReservations.id,
+      date: date != null ? date.toIso8601String() : updatedReservations.date,
+      time: time != null ? '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}' : updatedReservations.time,
+      status: ReservationStatus.pending.name,
+      guests: guests != 0 ? guests : updatedReservations.guests,
+      specialRequests: specialRequests ?? updatedReservations.specialRequests,
+      isUpcoming: updatedReservations.isUpcoming,
+    );
+    bool result = await _reservationRepository.updateReservation(reservation: newReservation);
+    // if (result) {
+    //   // Mettre à jour la réservation dans la liste
+    //   ReservationProfileDto updatedReservations = reservations.value.firstWhere((res) => res.id == id);
+    //   int index = reservations.value.indexOf(updatedReservations);
+    //   reservations.value[index] = newReservation;
+    // }
   }
 }
