@@ -41,14 +41,20 @@ class _MainTabViewState extends State<MainTabView> {
         label: 'Accueil',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(CupertinoIcons.calendar),
-        label: 'Réservation',
-      ),
-      const BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.person),
         label: 'Profil',
       ),
     ];
+
+    if (!_authViewModel.isAdmin) {
+      items.insert(
+        1,
+        const BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.calendar),
+          label: 'Réservations',
+        ),
+      );
+    }
 
     // Ajouter l'onglet Admin si l'utilisateur est admin
     if (_authViewModel.isAdmin) {
@@ -69,27 +75,25 @@ class _MainTabViewState extends State<MainTabView> {
       // Si admin, 4 onglets
       switch (index) {
         case 0:
-          return const RestaurantPresentationScreen();
+          return RestaurantPresentationScreen(key: UniqueKey());
         case 1:
-          return const ReservationScreen();
+          return ProfileScreen(key: UniqueKey());
         case 2:
-          return const ProfileScreen();
-        case 3:
-          return const AdminDashboardScreen();
+          return AdminDashboardScreen(key: UniqueKey());
         default:
-          return const RestaurantPresentationScreen();
+          return RestaurantPresentationScreen(key: UniqueKey());
       }
     } else {
       // Si non admin, 3 onglets
       switch (index) {
         case 0:
-          return const RestaurantPresentationScreen();
+          return RestaurantPresentationScreen(key: UniqueKey());
         case 1:
-          return const ReservationScreen();
+          return ReservationScreen(key: UniqueKey());
         case 2:
-          return const ProfileScreen();
+          return ProfileScreen(key: UniqueKey());
         default:
-          return const RestaurantPresentationScreen();
+          return RestaurantPresentationScreen(key: UniqueKey());
       }
     }
   }
