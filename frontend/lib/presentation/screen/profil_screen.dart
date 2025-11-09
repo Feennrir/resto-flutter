@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:restaurant_menu/models/reservation.dart';
 
 import '../../models/user.dart';
 import '../../repositories/dto/reservation_profile_dto.dart';
@@ -20,8 +19,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileViewModel _profileViewModel = ProfileViewModel();
   final AuthViewModel _authViewModel = AuthViewModel();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
 
   @override
   void initState() {
@@ -37,8 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _authViewModel.removeListener(_onAuthChanged);
     _profileViewModel.dispose();
     _authViewModel.dispose();
-    _nameController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -117,18 +112,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = _profileViewModel.userNotifier.value;
     if (user == null) return;
 
-    _nameController.text = user.name;
-    _phoneController.text = user.phone ?? '';
+    // Créer des contrôleurs locaux pour la modal
+    final nameController = TextEditingController(text: user.name);
+    final phoneController = TextEditingController(text: user.phone ?? '');
 
     showCupertinoModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
+      builder: (BuildContext sheetContext) => Container(
+        height: MediaQuery.of(sheetContext).size.height * 0.6,
         padding: const EdgeInsets.only(top: 6.0),
         margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
         ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
+        color: CupertinoColors.systemBackground.resolveFrom(sheetContext),
         child: SafeArea(
           top: false,
           child: Column(
@@ -140,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: CupertinoColors.separator.resolveFrom(context),
+                      color: CupertinoColors.separator.resolveFrom(sheetContext),
                       width: 0.5,
                     ),
                   ),
@@ -150,7 +146,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     CupertinoButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        nameController.dispose();
+                        phoneController.dispose();
+                        Navigator.pop(sheetContext);
+                      },
                       child: const Text('Annuler'),
                     ),
                     const Text(
@@ -170,14 +170,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               : () async {
                                   final success =
                                       await _profileViewModel.updateProfile(
-                                    name: _nameController.text.trim(),
-                                    phone: _phoneController.text.trim().isEmpty
+                                    name: nameController.text.trim(),
+                                    phone: phoneController.text.trim().isEmpty
                                         ? null
-                                        : _phoneController.text.trim(),
+                                        : phoneController.text.trim(),
                                   );
 
                                   if (success && mounted) {
-                                    Navigator.pop(context);
+                                    nameController.dispose();
+                                    phoneController.dispose();
+                                    Navigator.pop(sheetContext);
                                     showCupertinoDialog(
                                       context: context,
                                       builder: (context) =>
@@ -228,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 8),
                         CupertinoTextField(
-                          controller: _nameController,
+                          controller: nameController,
                           placeholder: 'Entrez votre nom',
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -261,9 +263,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 8),
                         CupertinoTextField(
-                          controller: _phoneController,
+                          controller: phoneController,
                           placeholder: 'Optionnel',
                           keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: CupertinoColors.systemGrey6,
@@ -336,7 +341,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    );
+    ).whenComplete(() {
+      // Nettoyer les contrôleurs quand la sheet est fermée
+      nameController.dispose();
+      phoneController.dispose();
+    });
   }
 
   @override
