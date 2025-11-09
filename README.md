@@ -36,7 +36,7 @@ L'application offre une expérience utilisateur fluide avec un design iOS natif 
 ## 🛠️ Stack Technique
 
 ### Frontend
-- **Framework** : Flutter ^3.9.0
+- **Framework** : Flutter ^3.35.0
 - **Langage** : Dart
 - **HTTP Client** : package `http` ^1.1.0
 - **Stockage local** : SharedPreferences ^2.2.2
@@ -62,12 +62,12 @@ git clone https://github.com/Feennrir/resto-flutter
 cd resto-flutter
 ```
 
-### 2. Démarrer le Backend (API + Base de données)
+### 2. Démarrer le Backend (API + Base de données + Serveur SMTP)
 
 ```bash
 cd backend
 
-# Démarrer les conteneurs Docker (PostgreSQL + API)
+# Démarrer les conteneurs Docker (PostgreSQL + API + Serveur SMTP)
 docker-compose up -d
 
 # Vérifier que les services sont actifs
@@ -77,6 +77,8 @@ docker-compose ps
 L'API sera accessible sur `http://localhost:3000`
 
 La base de données PostgreSQL sera sur le port `5432`
+
+Le serveur SMTP (MailHog) sera sur le port `1025` (SMTP) et l'interface web sur `http://localhost:8025`
 
 ### 3. Configurer le Frontend Flutter
 
